@@ -154,9 +154,9 @@ padding: 1rem;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
-  background-color: var(--color-background); /* lighter than post box */
+  background-color: var(--color-background); 
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.4s;
 }
 
 .like-btn:hover,
