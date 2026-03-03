@@ -77,7 +77,6 @@ main {
 
 
 
-/* Feed container */
 .feed {
   display: flex;
   flex-direction: column;
@@ -85,17 +84,15 @@ main {
   padding: 2rem;
 }
 
-/* Each post box */
 .post {
-  background-color: var(--color-header-footer); /* matches header/footer */
+  background-color: var(--color-header-footer); 
   border: 2px solid var(--color-primary);
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  color: var(--color-primary); /* ensures text is readable */
+  color: var(--color-primary); 
 }
 
-/* Header with author and timestamp */
 .post-header {
   display: flex;
   justify-content: space-between;
@@ -117,7 +114,6 @@ main {
 
 }
 
-/* Follow button */
 .follow-btn {
   padding: 0.3rem 0.8rem;
   border: none;
@@ -134,13 +130,11 @@ main {
   color: var(--color-background);
 }
 
-/* Timestamp */
 .timestamp {
   font-size: 0.9em;
   color: var(--color-secondary);
 }
 
-/* Post content */
 .post-content p {
   margin: 0 0 1rem 0;
   font-size: 1.1em;
@@ -149,7 +143,6 @@ main {
 padding: 1rem;
 }
 
-/* Actions */
 .post-actions {
   display: flex;
   gap: 1rem;
@@ -172,10 +165,74 @@ padding: 1rem;
   color: var(--color-background);
 }
 
-/* Comments section */
 .comments-section p {
   margin: 0.2rem 0;
   font-size: 0.95em;
   
   color: var(--color-primary);
 }
+
+.signup-container {
+  max-width: 400px;
+  margin: 3rem auto;
+  background-color: var(--color-header-footer);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  color: var(--color-primary);
+  font-family: "Lilita One", sans-serif;
+}
+
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.signup-container label {
+  display: block;
+  margin: 0.5rem 0 0.3rem 0;
+  font-weight: 300;
+}
+
+.signup-container input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 5px;
+  border: 1px solid var(--color-primary);
+  margin-bottom: 1rem;
+  font-family: "Lilita One", sans-serif;
+}
+
+.signup-container button {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.signup-container button:hover {
+  background-color: var(--color-secondary);
+}
+
+.login-link {
+  text-align: start;
+  margin-top: 1rem;
+  font-size: 0.95em;
+  color: var(--color-primary);
+}
+
+.login-link a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.login-link a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;}
