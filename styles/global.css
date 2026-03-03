@@ -1,0 +1,181 @@
+:root {
+  --color-background: #FFDAB3;
+  --color-surface: #C8AAAA;
+  --color-primary: #3d3247;
+  --color-secondary: #9F8383;
+  --color-header-footer: #E6B089;
+}
+h1 {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+body {
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+header {
+  background-color: var(--color-header-footer);
+}
+footer {
+  background-color: var(--color-header-footer);
+    color: var(--color-primary);
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 20px;
+}
+.logo {
+  width: 8em;
+  height: 8em;
+  object-fit: contain;
+}
+.site-name {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  color: var(--color-primary);
+}
+.nav-links a {
+  color: var(--color-primary);
+  text-decoration: none;
+    font-family: "Lilita One", sans-serif;
+   font-size: 1.5em;
+    background-color: var(--color-background); 
+  border-radius: 8px; 
+  padding: 1rem 1.5rem; 
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+.nav-links {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2em;
+  padding: 1rem ;
+  
+}
+.nav-links a:hover {
+  background-color: var(--color-primary); 
+  color: var(--color-background);       
+  transition: 0.3s;                      
+}
+.logo-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+hr {
+  border: none;
+  height: 0.5px;
+  background-color: var(--color-primary);
+}
+main {
+  flex: 1;
+}
+
+
+
+/* Feed container */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+/* Each post box */
+.post {
+  background-color: var(--color-header-footer); /* matches header/footer */
+  border: 2px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  color: var(--color-primary); /* ensures text is readable */
+}
+
+/* Header with author and timestamp */
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.author-name {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 400;
+  font-size: 1.2em;
+  color: var(--color-primary);
+
+}
+
+/* Follow button */
+.follow-btn {
+  padding: 0.3rem 0.8rem;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--color-secondary);
+  color: var(--color-background);
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.follow-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+/* Timestamp */
+.timestamp {
+  font-size: 0.9em;
+  color: var(--color-secondary);
+}
+
+/* Post content */
+.post-content p {
+  margin: 0 0 1rem 0;
+  font-size: 1.1em;
+  color: var(--color-primary);
+  font-family: "Courier Prime", monospace;
+padding: 1rem;
+}
+
+/* Actions */
+.post-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.like-btn,
+.comment-btn {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background-color: var(--color-background); /* lighter than post box */
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.like-btn:hover,
+.comment-btn:hover {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+/* Comments section */
+.comments-section p {
+  margin: 0.2rem 0;
+  font-size: 0.95em;
+  
+  color: var(--color-primary);
+}
