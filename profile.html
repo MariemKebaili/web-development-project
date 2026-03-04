@@ -13,9 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 
-
 <body>
-    
 
 <header>
   <div class="nav-container">
@@ -24,23 +22,68 @@
       <img src="media/logo.png" alt="Logo" class="logo">
       <h1 class="site-name">Bookworms</h1>
     </div>
-    <nav  >
+    <nav>
       <ul class="nav-links">
         <li><a href="feed.html">Feed</a></li>
         <li><a href="profile.html">Profile</a></li>
       </ul>
     </nav>
-
   </div>
 </header>
 
-    
+<main class="profile-container">
+  <section class="profile-header-top">
+    <div class="photo-name-row">
+      <img src="media/profile_photo.png" alt="Profile Photo" class="profile-photo-large" id="profile-pic" width="150px">
+      <h2 id="display-name" class="account-name">name</h2>
+    </div>
+
+    <div class="username-row">
+      <p id="display-username">@username</p>
+    </div>
+
+    <div class="bio-section">
+      <p id="display-bio">this is my bio..</p>
+    </div>
+
+    <div class="stats-inline-row">
+      <span class="stat-item"><strong>0</strong> posts</span>
+      <span class="stat-item"><strong>0</strong> followers</span>
+      <span class="stat-item"><strong>0</strong> following</span>
+    </div>
+
+    <button type="button" id="edit-profile-btn">Edit Profile</button>
+  </section>
+
+  <section id="edit-form-container" class="hidden">
+    <h3>Edit Your Profile</h3>
+    <form id="edit-profile-form">
+      <label for="input-photo">Profile photo URL:</label><br>
+      <input type="text" id="input-photo" name="photo" placeholder="Paste image link here"><br>
+
+      <label for="input-name">Profile name:</label><br>
+      <input type="text" id="input-name" name="profile-name"><br>
+
+      <label for="input-username">Username:</label><br>
+      <input type="text" id="input-username" name="username"><br>
+
+      <button type="button" id="save-changes-btn">Save Changes</button>
+      <button type="button" id="cancel-edit-btn">Cancel</button>
+    </form>
+  </section>
+
+
+
+  <section class="profile-main-feed" id="content-area">
+    <div id="user-posts-list">
+        <p class="empty-msg">No posts yet. Start sharing your favorite quotes!</p>
+    </div>
+  </section>
+</main>
 
 <footer>
   <p>&copy; 2026 Bookworms. All rights reserved.</p>
 </footer>
-
-
 
 </body>
 </html>
