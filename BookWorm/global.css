@@ -1,0 +1,450 @@
+/* ========================================
+   Bookworms - Global Stylesheet
+   Desktop First Responsive Design
+   ======================================== */
+
+
+/* ===== CSS Variables ===== */
+:root {
+
+  /* Colors */
+  --color-background: #edcead;
+  --color-surface: #b99e9e;
+  --color-primary: #3d3247;
+  --color-secondary: #867575;
+  --color-header-footer: #ebc4aa;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+  --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+
+  /* Radius */
+  --radius-md: 10px;
+
+  /* Spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+
+  /* Fonts */
+  --font-primary: "Lilita One", sans-serif;
+  --font-mono: "Courier Prime", monospace;
+}
+
+
+/* ===== Reset ===== */
+*{
+  box-sizing: border-box;
+}
+
+body{
+  margin:0;
+  font-family: var(--font-primary);
+  background-color: var(--color-background);
+  color: var(--color-primary);
+
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+main{
+  flex:1;
+}
+
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+header{
+  padding:1rem 2rem;
+  background: linear-gradient(to right, var(--color-header-footer) 0%, var(--color-surface) 80%, var(--color-header-footer) 100%);
+
+}
+
+.nav-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.logo-section{
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+}
+
+.logo{
+  width:120px;
+  height:auto;
+  object-fit:contain;
+}
+
+.site-name{
+  font-size:2rem;
+  color:var(--color-primary);
+}
+
+
+/* ===== Navigation ===== */
+
+.nav-links{
+  list-style:none;
+  display:flex;
+  gap:1rem;
+  margin:0;
+  padding:0;
+}
+
+.nav-links a{
+  text-decoration:none;
+  background-color:var(--color-background);
+  color:var(--color-primary);
+  padding:0.6rem 1rem;
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-sm);
+  transition:0.3s;
+}
+
+.nav-links a:hover{
+  background-color:var(--color-primary);
+  color:var(--color-background);
+}
+
+
+/* ========================================
+   FEED
+   ======================================== */
+
+.feed{
+  max-width:900px;
+  margin:auto;
+  padding:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+}
+
+
+/* ===== Post Card ===== */
+
+.post{
+  background-color:var(--color-surface);
+  border:8px solid var(--color-primary);
+  border-radius:var(--radius-md);
+  padding:1.5rem;
+  box-shadow:var(--shadow-lg);
+  transition:0.25s;
+}
+
+.post:hover{
+  transform:translateY(-3px);
+}
+
+
+/* ===== Post Header ===== */
+
+.post-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:0.5rem;
+}
+
+.author-info{
+  display:flex;
+  align-items:center;
+  gap:0.7rem;
+}
+
+.author-name{
+  font-size:1.2rem;
+}
+
+
+/* ===== Follow Button ===== */
+
+.follow-btn{
+  padding:0.3rem 0.7rem;
+  border:none;
+  border-radius:6px;
+  background-color:var(--color-secondary);
+  color:var(--color-background);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.follow-btn:hover{
+  background-color:var(--color-primary);
+}
+
+
+/* ===== Timestamp ===== */
+
+.timestamp{
+  font-size:0.9rem;
+  color:var(--color-secondary);
+}
+
+
+/* ===== Post Content ===== */
+
+.post-content p{
+  font-family:var(--font-mono);
+  font-size:1.05rem;
+  margin:1rem 0;
+}
+
+
+/* ===== Post Actions ===== */
+
+.post-actions{
+  display:flex;
+  gap:0.6rem;
+  margin-bottom:0.6rem;
+}
+
+.like-btn,
+.comment-btn{
+  border:none;
+  padding:0.5rem 0.8rem;
+  border-radius:6px;
+  background-color:var(--color-background);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.like-btn:hover,
+.comment-btn:hover{
+  background-color:var(--color-primary);
+  color:var(--color-background);
+}
+
+
+/* ===== Comments ===== */
+.comments-section p{
+  margin:0.2rem 0;
+  font-size:0.95rem;
+  color:var(--color-primary);
+}
+
+
+/* ========================================
+   LOGIN & SIGNUP
+   ======================================== */
+
+.signup-container{
+  width:80%;
+  max-width:550px;
+  margin:auto;
+  margin-top:3rem;
+  background: linear-gradient(to left, var(--color-surface) 0%, var(--color-surface) 20%, var(--color-header-footer) 100%);
+  padding:2rem;
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-md);
+}
+
+.signup-container h2{
+  text-align:center;
+  margin-bottom:3rem;
+
+}
+
+.signup-container label{
+  display:block;
+  margin-top:2rem;
+  margin-bottom: 0.5rem;
+  font-size: larger;
+}
+
+.signup-container input{
+  width:100%;
+  padding:0.6rem;
+  margin-top:0.3rem;
+  margin-bottom:1rem;
+  border-radius:6px;
+  border:1px solid var(--color-primary);
+  background-color: rgb(240, 217, 207);
+}
+
+.signup-container button{
+  width:100%;
+  padding:0.8rem;
+  border:none;
+  border-radius:var(--radius-md);
+  background-color:var(--color-primary);
+  color:var(--color-background);
+  font-size:1rem;
+  cursor:pointer;
+  transition:0.3s;
+  margin-top:4rem;
+}
+
+.signup-container button:hover{
+  background-color:var(--color-secondary);
+}
+
+.login-link,
+.signup-link{
+  margin-top:1rem;
+  text-align:center;
+}
+
+.login-link a,
+.signup-link a{
+  color:var(--color-secondary);
+  text-decoration:none;
+}
+
+.login-link a:hover,
+.signup-link a:hover{
+  
+  text-decoration:underline;
+}
+
+
+/* ========================================
+   PROFILE PAGE
+   ======================================== */
+
+.profile-container{
+  max-width:900px;
+  margin:auto;
+  padding:2rem;
+  display: flex;
+  flex-direction: column;
+  gap:1rem;
+}
+
+.profile-header-top{
+  background: linear-gradient(to bottom, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 60%);
+  padding:2rem;
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-md);
+  margin-bottom:2rem;
+}
+
+.photo-name-row{
+  display:flex;
+  align-items:center;
+  gap:1.5rem;
+}
+
+.profile-photo-large{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+.account-name{
+  font-size:1.6rem;
+}
+
+.username-row{
+  margin-top:0.5rem;
+  color:var(--color-secondary);
+}
+
+.bio-section{
+  margin-top:0.8rem;
+}
+
+.stats-inline-row{
+  display:flex;
+  gap:2rem;
+  margin-top:1rem;
+}
+
+.stat-item{
+  font-size:1rem;
+}
+
+#edit-profile-btn{
+  margin-top:1rem;
+  padding:0.6rem 1rem;
+  border:none;
+  border-radius:6px;
+  background-color:var(--color-primary);
+  color:var(--color-background);
+  cursor:pointer;
+}
+
+#edit-profile-btn:hover{
+  background-color:var(--color-secondary);
+}
+
+
+/* ===== Edit Profile Form ===== */
+
+#edit-form-container{
+  background-color:var(--color-surface);
+  padding:1.5rem;
+  border-radius:var(--radius-md);
+  margin-bottom:2rem;
+}
+
+#edit-form-container input{
+  width:100%;
+  padding:0.6rem;
+  margin-bottom:1rem;
+}
+
+.hidden{
+  display:none;
+}
+
+
+/* ========================================
+   FOOTER
+   ======================================== */
+
+footer{
+  background: linear-gradient(to left, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 30%);
+  text-align:center;
+  padding:1.5rem;
+  margin-top:2rem;
+}
+
+
+/* ========================================
+   RESPONSIVE (Mobile)
+   ======================================== */
+
+@media (max-width:768px){
+
+  header{
+    padding:1rem;
+  }
+
+  .nav-container{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0.5rem;
+  }
+
+  .nav-links{
+    width:100%;
+    justify-content:flex-start;
+  }
+
+  .feed{
+    padding:1rem;
+  }
+
+  .profile-container{
+    padding:1rem;
+  }
+
+  .photo-name-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .stats-inline-row{
+    gap:1rem;
+  }
+
+}
