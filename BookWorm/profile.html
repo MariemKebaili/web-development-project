@@ -49,9 +49,9 @@
     </div>
 
     <div class="stats-inline-row">
-      <span class="stat-item"><strong>0</strong> posts</span>
-      <span class="stat-item"><strong>0</strong> followers</span>
-      <span class="stat-item"><strong>0</strong> following</span>
+      <span class="stat-item"><strong id="post-count">0</strong> posts</span>
+      <span class="stat-item"><strong id="follower-count">0</strong> followers</span>
+      <span class="stat-item"><strong id="following-count">0</strong> following</span>
     </div>
 
     <button type="button" id="edit-profile-btn">Edit Profile</button>
@@ -74,11 +74,28 @@
     </form>
   </section>
 
-
+  <section class="create-post-section">
+    <h3>Create a Post</h3>
+    <textarea id="post-input" placeholder="Share a book quote or thought..." rows="3"></textarea>
+    <button id="post-btn">Post</button>
+  </section>
 
   <section class="profile-main-feed" id="content-area">
     <div id="user-posts-list">
         <p class="empty-msg">No posts yet. Start sharing your favorite quotes!</p>
+    </div>
+
+    <div id="post-detail" class="hidden">
+      <h3>Post</h3>
+      <p id="detail-text"></p>
+
+      <h4>Comments</h4>
+      <div id="comments-list"></div>
+
+      <input type="text" id="comment-input" placeholder="Add a comment">
+      <button id="add-comment-btn">Add Comment</button>
+
+      <button id="close-detail-btn">Close</button>
     </div>
   </section>
 </main>
