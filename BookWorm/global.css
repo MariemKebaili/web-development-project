@@ -8,12 +8,12 @@
 :root {
 
   /* Colors */
-  --color-background: #edcead;
+  --color-background: #e1ccba;
   --color-surface: #b99e9e;
   --color-primary: #3d3247;
   --color-secondary: #867575;
-  --color-header-footer: #ebc4aa;
-
+  --color-header-footer: #dbc5b0;
+  
   /* Shadows */
   --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
   --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
@@ -60,7 +60,7 @@ main{
 
 header{
   padding:1rem 2rem;
-  background: linear-gradient(to right, var(--color-header-footer) 0%, var(--color-surface) 80%, var(--color-header-footer) 100%);
+  background: linear-gradient(to right, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 100%);
 
 }
 
@@ -68,6 +68,9 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  max-width: 1200px;
+  margin:auto;
+  width: 100%;
 }
 
 .logo-section{
@@ -310,6 +313,7 @@ header{
    ======================================== */
 
 .profile-container{
+  width: 100%;
   max-width:900px;
   margin:auto;
   padding:2rem;
@@ -319,7 +323,9 @@ header{
 }
 
 .profile-header-top{
-  background: linear-gradient(to bottom, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 60%);
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, var(--color-header-footer) 0%, var(--color-surface) 100%, var(--color-header-footer) 60%);
   padding:2rem;
   border-radius:var(--radius-md);
   box-shadow:var(--shadow-md);
@@ -356,6 +362,10 @@ header{
   display:flex;
   gap:2rem;
   margin-top:1rem;
+}
+
+.profile-header-top > *{
+width: 100%;
 }
 
 .stat-item{
@@ -396,13 +406,148 @@ header{
   display:none;
 }
 
+/* ========================================
+   CREATE POST SECTION
+   ======================================== */
+
+.create-post-section{
+  background-color:var(--color-surface);  
+  padding:1.5rem;
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-md);
+  margin-bottom:2rem;
+}
+
+.create-post-section h3{
+  margin-top:0rem;
+  margin-bottom: 1.5rem;
+}
+
+#create-post-form textarea{
+  width:100%;
+  padding:0.6rem;
+  margin-top:0.5rem;
+  margin-bottom:1rem;
+  border-radius:6px;
+  border:1px solid var(--color-primary);
+  background-color: rgb(240, 217, 207);
+}
+
+#post-input{
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-primary);
+  background-color: rgb(240, 217, 207);
+  resize:none; 
+  font-family: var(--font-mono);
+}
+
+#post-input:focus{
+  outline:none;
+  border-color:var(--color-secondary);
+
+}
+
+#post-btn{
+  align-self: flex-start;
+  padding:0.5rem 1.2rem;
+  border:none;
+  border-radius: 5px;
+  border-radius:var(--radius-md);
+  background-color:var(--color-primary);
+  color:var(--color-background);
+  cursor:pointer;
+  transition:0.3s;
+}
+
+#post-btn:hover{
+  background-color:var(--color-secondary);
+}
+
+
+/* ========================================
+   USER POSTS AREA
+   ======================================== */
+  #user-posts-list{
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+}
+
+.empty-msg{
+  text-align:center;
+  color:var(--color-secondary);
+  font-style:italic;
+}
+
+/* ========================================
+   POST DETAIL VIEW
+   ======================================== */
+   #post-detail{
+    background-color:var(--color-surface);
+    padding:1.5rem;
+    border-radius:var(--radius-md); 
+    box-shadow:var(--shadow-md);
+   }
+
+   #post-detail h3{
+    margin-top:0;
+   }
+
+   #detail-text{
+    font-family:var(--font-mono);
+    font-size:1.05rem;
+    margin:1rem 0;
+   }
+
+   #comments-list{
+    display:flex;
+    flex-direction:column;
+    gap:0.4rem;
+    margin-bottom: 1rem;
+   }
+
+   #comment-input{
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid var(--color-primary);
+    background-color: rgb(240, 217, 207);
+    resize: vertical; 
+    font-family: var(--font-mono);
+   }
+
+    #comment-input:focus{
+      outline:none;
+      border-color:var(--color-secondary);
+    }
+
+    #add-comment-btn, #close-detail-btn{
+      margin:0.4rem 0.9rem;
+      padding:0.6rem 1rem;
+      border:none;
+      border-radius:var(--radius-md);
+      background-color:var(--color-primary);
+      color:var(--color-background);
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    #add-comment-btn:hover, #close-detail-btn:hover{
+      background-color:var(--color-secondary);
+    }
+
+
+
+
 
 /* ========================================
    FOOTER
    ======================================== */
 
 footer{
-  background: linear-gradient(to left, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 30%);
+  background: linear-gradient(to left, var(--color-header-footer) 0%, var(--color-surface) 40%, var(--color-header-footer) 100%);
   text-align:center;
   padding:1.5rem;
   margin-top:2rem;
@@ -440,11 +585,25 @@ footer{
 
   .photo-name-row{
     flex-direction:column;
-    align-items:flex-start;
+    align-items:center;
+    text-align: center;
   }
 
   .stats-inline-row{
     gap:1rem;
   }
+
+.profile-header-top{
+padding: 1.5rem;
+}
+
+.profile-photo-large{
+  width:100px;
+  height:100px;
+}
+
+.account-name{
+  font-size:1.4rem;
+}
 
 }
