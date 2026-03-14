@@ -1,11 +1,29 @@
+// =======================================
+// Bookworm Social Platform
+// Handles authentication, posts, feed,
+// likes, comments, and follow system
+// =======================================
+
+
+
+// ===============================
+// Local Storage Initialization
+// Create main storage object if it doesn't exist
+// ===============================
 if (!localStorage.getItem("bookwormData")) {
     const initialData = {
-        users:[],
-        posts:[]
-};
+        users: [],
+        posts: []
+    };
     localStorage.setItem("bookwormData", JSON.stringify(initialData));
 }
 
+
+// ===============================
+// Data Helper Functions
+// getData(): retrieve stored data
+// saveData(): update localStorage
+// ===============================
 function getData() {
     const data = localStorage.getItem("bookwormData");
     return data ? JSON.parse(data) : { users: [], posts: [] };
@@ -15,18 +33,23 @@ function saveData(data) {
     localStorage.setItem("bookwormData", JSON.stringify(data));
 }
 
+
+// ===============================
+// User Registration (Sign Up)
+// Handles creating a new user account
+// ===============================
 const signupForm = document.getElementById("signup-form");
 
 if (signupForm) {
 
-    signupForm.addEventListener("submit", function(e) {
+    signupForm.addEventListener("submit", function (e) {
 
         e.preventDefault();
 
         const username = document.getElementById("username").value;
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        
+
         const data = getData();
 
         const newUser = {
@@ -49,11 +72,17 @@ if (signupForm) {
     });
 }
 
+
+// ===============================
+// User Login
+// Checks username and password
+// Saves currentUser in localStorage
+// ===============================
 const loginForm = document.getElementById("login-form");
 
 if (loginForm) {
 
-    loginForm.addEventListener("submit", function(e) {
+    loginForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
         const username = document.getElementById("username").value;
@@ -73,11 +102,16 @@ if (loginForm) {
     });
 }
 
+
+// ===============================
+// Create Post
+// Allows the logged-in user to publish a new post
+// ===============================
 const postBtn = document.getElementById('post-btn');
 
 if (postBtn) {
 
-    postBtn.addEventListener("click", function() {
+    postBtn.addEventListener("click", function () {
         const postText = document.getElementById("post-input").value;
 
         if (postText.trim() === "") return;
@@ -85,13 +119,14 @@ if (postBtn) {
         const data = getData();
         const currentUser = localStorage.getItem("currentUser");
 
-        const newPost = {
+       const newPost = {
             id: Date.now(),
             author: currentUser,
             text: postText,
             likes: 0,
-            comments: []
-        };
+            comments: [],
+            timestamp: Date.now()
+            };
 
         data.posts.push(newPost);
         saveData(data);
@@ -102,7 +137,13 @@ if (postBtn) {
     });
 }
 
-function loadUserPosts(){
+
+// ===============================
+// Load User Posts
+// Displays posts created by the current user
+// Used on the Profile page
+// ===============================
+function loadUserPosts() {
     const postList = document.getElementById("user-posts-list");
 
     if (!postList) return;
@@ -114,7 +155,7 @@ function loadUserPosts(){
 
     const userPosts = data.posts.filter(p => p.author === currentUser);
 
-    if (userPosts.length === 0){
+    if (userPosts.length === 0) {
         postList.innerHTML = "<p>No posts yet. Start your favorite qoutes!</p>";
         return;
     }
@@ -126,18 +167,27 @@ function loadUserPosts(){
 
         div.innerHTML = `
             <p>${post.text}</p>
+
             <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-            <button class="comment-btn">💬 ${post.comments.length}</button>
+
+            <button onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
+
+            <button onclick="deletePost(${post.id})">Delete</button>
         `;
         postList.appendChild(div);
     });
 }
 
+
+// ===============================
+// Profile Editing
+// Allows users to update name, username, and profile picture
+// ===============================
 const editBtn = document.getElementById("edit-profile-btn");
 const editForm = document.getElementById("edit-form-container");
 
-if(editBtn){
-    editBtn.addEventListener("click", function() {
+if (editBtn) {
+    editBtn.addEventListener("click", function () {
 
         editForm.classList.remove("hidden");
     });
@@ -146,6 +196,12 @@ if(editBtn){
 const saveProfileBtn = document.getElementById("save-changes-btn");
 const cancelEditBtn = document.getElementById("cancel-edit-btn");
 
+
+// ===============================
+// Update Profile UI
+// Displays user info: name, username, bio, posts count,
+// followers count, and following count
+// ===============================
 function updateProfileUI() {
     const data = getData();
     const currentUser = localStorage.getItem("currentUser");
@@ -156,10 +212,13 @@ function updateProfileUI() {
         document.getElementById("display-username").textContent = `@${user.username}`;
         document.getElementById("display-bio").textContent = user.bio || "No bio yet...";
         if (user.photo) document.getElementById("profile-pic").src = user.photo;
-        
+
         // Update stats
         const userPosts = data.posts.filter(p => p.author === currentUser);
         document.getElementById("post-count").textContent = userPosts.length;
+        
+        document.getElementById("follower-count").textContent = user.followers.length;
+        document.getElementById("following-count").textContent = user.following.length;
     }
 }
 
@@ -176,7 +235,7 @@ if (saveProfileBtn) {
 
         saveData(data);
         localStorage.setItem("currentUser", data.users[userIndex].username); // In case username changed
-        location.reload(); 
+        location.reload();
     });
 }
 
@@ -186,6 +245,11 @@ if (cancelEditBtn) {
     });
 }
 
+
+// ===============================
+// Global Feed
+// Shows posts from all users in reverse chronological order
+// ===============================
 function loadGlobalFeed() {
     const feedContainer = document.querySelector("main.feed");
     if (!feedContainer || window.location.pathname.includes("profile.html")) return;
@@ -193,24 +257,59 @@ function loadGlobalFeed() {
     const data = getData();
     feedContainer.innerHTML = ""; // Clear static posts
 
-    data.posts.reverse().forEach(post => { // Show newest first
+        [...data.posts].reverse().forEach(post => { // Show newest first 
         const postDiv = document.createElement("div");
         postDiv.classList.add("post");
         postDiv.innerHTML = `
-            <div class="post-header">
-                <span class="author-name">${post.author}</span>
-                <span class="timestamp">Just now</span>
-            </div>
-            <div class="post-content"><p>${post.text}</p></div>
-            <div class="post-actions">
-                <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-                <button class="comment-btn">💬 ${post.comments.length}</button>
-            </div>
+        <div class="post-header">
+
+        <div class="author-info">
+        <span class="author-name">${post.author}</span>
+        <button onclick="toggleFollow('${post.author}')">
+        Follow
+        </button>
+        </div>
+
+        <span class="timestamp">Just now</span>
+        </div>
+
+        <div class="post-content">
+        <p>${post.text}</p>
+        </div>
+
+        <div class="post-actions">
+
+        <button onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
+
+        <button onclick="toggleCommentBox(${post.id})">
+        💬 ${post.comments.length}
+        </button>
+
+        </div>
+
+        <div id="comment-box-${post.id}" class="hidden">
+
+        <input type="text" id="comment-input-${post.id}" placeholder="Write comment">
+
+        <button onclick="addComment(${post.id})">
+        Comment
+        </button>
+
+        </div>
+
+        <div id="comments-${post.id}">
+        ${post.comments.map(c=>`<p><strong>${c.author}</strong>: ${c.text}</p>`).join("")}
+        </div>
         `;
         feedContainer.appendChild(postDiv);
     });
 }
 
+
+// ===============================
+// Like Post
+// Increases the like counter for a post
+// ===============================
 function handleLike(postId) {
     const data = getData();
     const post = data.posts.find(p => p.id === postId);
@@ -222,6 +321,86 @@ function handleLike(postId) {
         else loadUserPosts();
     }
 }
+
+
+// ===============================
+// Delete Post
+// Removes a post created by the current user
+// ===============================
+function deletePost(postId){
+const data = getData();
+data.posts = data.posts.filter(p => p.id !== postId);
+
+saveData(data);
+
+loadUserPosts();
+loadGlobalFeed();
+}
+
+// ===============================
+// Comment System
+// toggleCommentBox(): show/hide comment input
+// addComment(): add a new comment to the post
+// ===============================
+function toggleCommentBox(postId){
+
+const box = document.getElementById(`comment-box-${postId}`);
+box.classList.toggle("hidden");
+
+}
+
+
+// ===============================
+// Follow / Unfollow System
+// Allows users to follow or unfollow other users
+// ===============================
+function toggleFollow(author){
+
+const data = getData();
+const currentUser = localStorage.getItem("currentUser");
+
+if(author === currentUser) return;
+const user = data.users.find(u => u.username === currentUser);
+
+if(user.following.includes(author)){
+user.following = user.following.filter(u => u !== author);
+
+}else{
+user.following.push(author);
+
+}
+
+saveData(data);
+loadGlobalFeed();
+
+}
+
+
+function addComment(postId){
+
+const input = document.getElementById(`comment-input-${postId}`);
+const text = input.value;
+
+if(text.trim()==="") return;
+const data = getData();
+const post = data.posts.find(p=>p.id===postId);
+
+post.comments.push({
+author: localStorage.getItem("currentUser"),
+text: text
+});
+
+saveData(data);
+input.value = "";
+loadGlobalFeed();
+
+}
+
+
+// ===============================
+// Page Initialization
+// Runs specific functions depending on the current page
+// ===============================
 
 // Only run these if the elements exist on the current page
 if (document.getElementById("user-posts-list")) {
