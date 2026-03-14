@@ -351,7 +351,7 @@ function loadGlobalFeed() {
                     <span class="author-name">${post.author}</span>
                     <button class="follow-btn" onclick="toggleFollow('${post.author}')">Follow</button>
                 </div>
-                <span class="timestamp">Just now</span>
+                <span class="timestamp">${formatTimestamp(post.timestamp)}</span>
             </div>
 
             <div class="post-content">
@@ -406,6 +406,38 @@ function handleLike(postId) {
     loadGlobalFeed();
 }
 
+function formatTimestamp(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (seconds < 60) {
+        return "Just now";
+    }
+
+    if (minutes < 60) {
+        return minutes + " min ago";
+    }
+
+    if (hours < 24) {
+        return hours + " hr ago";
+    }
+
+    if (days < 7) {
+        return days + " day ago";
+    }
+
+    const date = new Date(timestamp);
+    return date.toLocaleDateString();
+}
+
+setInterval(() => {
+    loadGlobalFeed();
+}, 60000);
 
 // ===============================
 // Delete Post
