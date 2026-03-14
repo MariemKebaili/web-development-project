@@ -167,11 +167,8 @@ function loadUserPosts() {
 
         div.innerHTML = `
             <p>${post.text}</p>
-
             <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-
             <button onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
-
             <button onclick="deletePost(${post.id})">Delete</button>
         `;
         postList.appendChild(div);
@@ -413,4 +410,10 @@ if (document.getElementById("display-name")) {
 
 if (document.querySelector("main.feed")) {
     loadGlobalFeed();
+}
+
+if (closeDetailBtn) {
+    closeDetailBtn.addEventListener("click", () => {
+        document.getElementById("post-detail").classList.add("hidden");
+    });
 }
