@@ -168,8 +168,8 @@ function loadUserPosts() {
         div.innerHTML = `
             <p>${post.text}</p>
             <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-            <button onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
-            <button onclick="deletePost(${post.id})">Delete</button>
+            <button class="comment-btn" onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
+            <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
         `;
         postList.appendChild(div);
     });
@@ -229,6 +229,7 @@ if (saveProfileBtn) {
         data.users[userIndex].photo = document.getElementById("input-photo").value;
         data.users[userIndex].name = document.getElementById("input-name").value;
         data.users[userIndex].username = document.getElementById("input-username").value;
+        data.users[userIndex].bio = document.getElementById("input-bio").value;
 
         saveData(data);
         localStorage.setItem("currentUser", data.users[userIndex].username); // In case username changed
@@ -261,42 +262,28 @@ function loadGlobalFeed() {
         <div class="post-header">
 
         <div class="author-info">
-        <span class="author-name">${post.author}</span>
-        <button onclick="toggleFollow('${post.author}')">
-        Follow
-        </button>
+            <span class="author-name">${post.author}</span>
+            <button class="follow-btn" onclick="toggleFollow('${post.author}')">Follow</button>
         </div>
 
         <span class="timestamp">Just now</span>
         </div>
 
         <div class="post-content">
-        <p>${post.text}</p>
+            <p>${post.text}</p>
         </div>
 
         <div class="post-actions">
-
-        <button onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-
-        <button onclick="toggleCommentBox(${post.id})">
-        💬 ${post.comments.length}
-        </button>
-
+            <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
+            <button class="comment-btn" onclick="toggleCommentBox(${post.id})">💬 ${post.comments.length}</button>
         </div>
 
         <div id="comment-box-${post.id}" class="hidden">
-
-        <input type="text" id="comment-input-${post.id}" placeholder="Write comment">
-
-        <button onclick="addComment(${post.id})">
-        Comment
-        </button>
-
+            <input type="text" id="comment-input-${post.id}" placeholder="Write comment">
+            <button class="comment-btn" onclick="addComment(${post.id})">Comment</button>
         </div>
 
-        <div id="comments-${post.id}">
-        ${post.comments.map(c=>`<p><strong>${c.author}</strong>: ${c.text}</p>`).join("")}
-        </div>
+        <div id="comments-${post.id}">${post.comments.map(c=>`<p><strong>${c.author}</strong>: ${c.text}</p>`).join("")}</div>
         `;
         feedContainer.appendChild(postDiv);
     });
