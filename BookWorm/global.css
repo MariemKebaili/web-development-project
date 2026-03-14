@@ -215,6 +215,7 @@ header{
   padding:0.5rem 0.8rem;
   border-radius:6px;
   background-color:var(--color-background);
+  font-family: var(--font-primary);
   cursor:pointer;
   transition:0.3s;
 }
@@ -231,8 +232,22 @@ header{
   margin:0.2rem 0;
   font-size:0.95rem;
   color:var(--color-primary);
+  padding-top: 0.5rem;
 }
 
+.comment-input{
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-primary);
+  background-color: rgb(240, 217, 207);
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+.comment-input:focus{
+  outline:none;
+  border-color:var(--color-secondary);
+}
 
 /* ========================================
    LOGIN & SIGNUP
@@ -378,6 +393,7 @@ width: 100%;
   border:none;
   border-radius:6px;
   background-color:var(--color-primary);
+  font-family: var(--font-primary);
   color:var(--color-background);
   cursor:pointer;
 }
@@ -396,10 +412,45 @@ width: 100%;
   margin-bottom:2rem;
 }
 
-#edit-form-container input{
+#edit-form-container input, #edit-form-container textarea{
   width:100%;
   padding:0.6rem;
   margin-bottom:1rem;
+  border-radius: 6px;
+  border:1px solid var(--color-primary);
+  background-color: rgb(240, 217, 207);
+  font-family: var(--font-mono);
+  margin-bottom: 0.8rem;
+}
+
+#edit-form-container input:focus, #edit-form-container textarea:focus{
+  outline:none;
+  border-color:var(--color-secondary);
+}
+
+#edit-form-container button{
+  padding:0.6rem 1rem;
+  border:none;
+  border-radius: var(--radius-md);
+  background-color:var(--color-primary);
+  font-family: var(--font-primary);
+  color:var(--color-background);
+  cursor:pointer;
+  transition:0.3s;
+  margin-top: 0.5rem;
+  width: fit-content;
+}
+
+#edit-form-container button:hover{
+  background-color:var(--color-secondary);
+}
+
+#cancel-edit-btn{
+  background-color:var(--color-secondary);
+}
+
+#cancel-edit-btn:hover{
+  background-color:var(--color-primary);
 }
 
 .hidden{
@@ -456,6 +507,7 @@ width: 100%;
   border-radius: 5px;
   border-radius:var(--radius-md);
   background-color:var(--color-primary);
+  font-family: var(--font-primary);
   color:var(--color-background);
   cursor:pointer;
   transition:0.3s;

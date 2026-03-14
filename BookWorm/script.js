@@ -364,7 +364,7 @@ function loadGlobalFeed() {
             </div>
 
             <div id="comment-box-${post.id}" class="hidden">
-                <input type="text" id="comment-input-${post.id}" placeholder="Write comment">
+                <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment...">
                 <button class="comment-btn" onclick="addComment(${post.id})">Comment</button>
             </div>
 
