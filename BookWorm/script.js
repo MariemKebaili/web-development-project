@@ -126,8 +126,11 @@ function loadUserPosts(){
 
         div.innerHTML = `
             <p>${post.text}</p>
-            <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
-            <button class="comment-btn">💬 ${post.comments.length}</button>
+            <div class="post-actions">
+                <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likes}</button>
+                <button class="comment-btn">💬 ${post.comments.length}</button>
+                <button class="delete-btn" onclick="handleDelete(${post.id})">Delete</button>
+            <div>
         `;
         postList.appendChild(div);
     });
@@ -223,6 +226,55 @@ function handleLike(postId) {
     }
 }
 
+// --- DELETE LOGIC ---
+function handleDelete(postId) {
+    if (confirm("Are you sure you want to delete this post?")) {
+        const data = getData();
+        // Remove the post from the array
+        data.posts = data.posts.filter(p => p.id !== postId);
+        
+        saveData(data);
+        loadUserPosts();   // Refresh the list
+        updateProfileUI(); // Refresh the post count stat
+    }
+}
+
+// --- VIEW DETAIL LOGIC ---
+function viewPostDetail(postId) {
+    const data = getData();
+    const post = data.posts.find(p => p.id === postId);
+    const detailView = document.getElementById("post-detail");
+
+    if (post && detailView) {
+        document.getElementById("detail-text").textContent = post.text;
+        detailView.classList.remove("hidden");
+
+        // Load existing comments
+        const commentsList = document.getElementById("comments-list");
+        commentsList.innerHTML = post.comments.map(c => `<p class="comment-item">${c}</p>`).join('');
+
+        // Setup the "Add Comment" button for this specific post
+        document.getElementById("add-comment-btn").onclick = function() {
+            const commentInput = document.getElementById("comment-input");
+            if (commentInput.value.trim() !== "") {
+                post.comments.push(commentInput.value);
+                saveData(data);
+                commentInput.value = "";
+                viewPostDetail(postId); // Refresh the modal view
+                loadUserPosts(); // Refresh the count on the main list
+            }
+        };
+    }
+}
+
+// --- CLOSE DETAIL VIEW ---
+const closeDetailBtn = document.getElementById("close-detail-btn");
+if (closeDetailBtn) {
+    closeDetailBtn.addEventListener("click", () => {
+        document.getElementById("post-detail").classList.add("hidden");
+    });
+}
+
 // Only run these if the elements exist on the current page
 if (document.getElementById("user-posts-list")) {
     loadUserPosts();
@@ -234,4 +286,10 @@ if (document.getElementById("display-name")) {
 
 if (document.querySelector("main.feed")) {
     loadGlobalFeed();
+}
+
+if (closeDetailBtn) {
+    closeDetailBtn.addEventListener("click", () => {
+        document.getElementById("post-detail").classList.add("hidden");
+    });
 }

@@ -538,8 +538,38 @@ width: 100%;
       background-color:var(--color-secondary);
     }
 
+/* ========================================
+   DELETE BUTTON
+   ======================================== */
 
+.delete-btn {
+  background-color: #a34e4e;
+  color: var(--color-background);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
 
+.delete-btn:hover {
+  background-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.post-footer-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+#delete-button {
+  margin-top: 1rem;
+  width: auto;
+  display: inline-block;
+}
 
 
 /* ========================================
