@@ -573,6 +573,22 @@ function toggleFollow(author) {
     updateProfileUI();
 }
 
+function updateLoginButton() {
+
+    const loginBtn = document.getElementById("login-btn");
+    if (!loginBtn) return;
+
+    const currentUser = localStorage.getItem("currentUser");
+
+    if (currentUser) {
+        loginBtn.textContent = currentUser;
+        loginBtn.href = "profile.html";
+    } else {
+        loginBtn.textContent = "Log in";
+        loginBtn.href = "login.html";
+    }
+}
+
 
 // ===================
 // Page Initialization
@@ -599,4 +615,6 @@ if (closeDetailBtn) {
             postDetail.classList.add("hidden");
         }
     });
+
+    updateLoginButton();
 }
