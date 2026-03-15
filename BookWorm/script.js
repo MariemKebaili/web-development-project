@@ -5,10 +5,11 @@
 // =======================================
 
 
-// ===============================
+// ==============================================
 // Local Storage Initialization
 // Create main storage object if it doesn't exist
-// ===============================
+// ==============================================
+
 if (!localStorage.getItem("bookwormData")) {
     const initialData = {
         users: [],
@@ -19,8 +20,21 @@ if (!localStorage.getItem("bookwormData")) {
 
 
 // ===============================
-// Data Helper Functions
+// Page Protection
+// Redirect if user not logged in
 // ===============================
+
+const currentUser = localStorage.getItem("currentUser");
+
+if (!currentUser && window.location.pathname.includes("profile.html")) {
+    window.location.href = "login.html";
+}
+
+
+// =====================
+// Data Helper Functions
+// =====================
+
 function getData() {
     const data = localStorage.getItem("bookwormData");
     return data ? JSON.parse(data) : { users: [], posts: [] };
@@ -31,11 +45,12 @@ function saveData(data) {
 }
 
 
-// ===============================
+// =====================================
 // Data Migration
 // Converts old posts that used likes: 0
 // into the new likedBy: []
-// ===============================
+// =====================================
+
 function migrateOldData() {
     const data = getData();
     let changed = false;
@@ -66,9 +81,10 @@ function migrateOldData() {
 migrateOldData();
 
 
-// ===============================
+// ===========================
 // User Registration (Sign Up)
-// ===============================
+// ===========================
+
 const signupForm = document.getElementById("signup-form");
 
 if (signupForm) {
@@ -107,9 +123,10 @@ if (signupForm) {
 }
 
 
-// ===============================
+// ==========
 // User Login
-// ===============================
+// ==========
+
 const loginForm = document.getElementById("login-form");
 
 if (loginForm) {
@@ -132,9 +149,10 @@ if (loginForm) {
 }
 
 
-// ===============================
+// ===========
 // Create Post
-// ===============================
+// ===========
+
 const postBtn = document.getElementById("post-btn");
 
 if (postBtn) {
@@ -167,9 +185,10 @@ if (postBtn) {
 }
 
 
-// ===============================
+// ===============
 // Load User Posts
-// ===============================
+// ===============
+
 function loadUserPosts() {
     const postList = document.getElementById("user-posts-list");
     if (!postList) return;
@@ -208,9 +227,10 @@ function loadUserPosts() {
 }
 
 
-// ===============================
+// ===============
 // Profile Editing
-// ===============================
+// ===============
+
 const editBtn = document.getElementById("edit-profile-btn");
 const editForm = document.getElementById("edit-form-container");
 const saveProfileBtn = document.getElementById("save-changes-btn");
@@ -296,9 +316,28 @@ if (cancelEditBtn) {
 }
 
 
-// ===============================
+// =============
+// Logout System
+// =============
+
+const logoutBtn = document.getElementById("logout-btn");
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+
+        // remove logged-in user
+        localStorage.removeItem("currentUser");
+
+        // redirect to login page
+        window.location.href = "login.html";
+    });
+}
+
+
+// =================
 // Update Profile UI
-// ===============================
+// =================
+
 function updateProfileUI() {
     const data = getData();
     const currentUser = localStorage.getItem("currentUser");
@@ -327,9 +366,10 @@ function updateProfileUI() {
 }
 
 
-// ===============================
+// ===========
 // Global Feed
-// ===============================
+// ===========
+
 function loadGlobalFeed() {
     const feedContainer = document.querySelector("main.feed");
     if (!feedContainer || window.location.pathname.includes("profile.html")) return;
@@ -378,11 +418,12 @@ function loadGlobalFeed() {
 }
 
 
-// ===============================
+// =====================================
 // Like Post
 // One like per user only
 // first click like, second click unlike
-// ===============================
+// =====================================
+
 function handleLike(postId) {
     const data = getData();
     const currentUser = localStorage.getItem("currentUser");
@@ -405,6 +446,12 @@ function handleLike(postId) {
     loadUserPosts();
     loadGlobalFeed();
 }
+
+
+// ===============================
+// Timestamp Formatting
+// Converts timestamp to "Just now", "5 min ago", "2 hr ago", etc.
+// ===============================
 
 function formatTimestamp(timestamp) {
     const now = Date.now();
@@ -439,9 +486,11 @@ setInterval(() => {
     loadGlobalFeed();
 }, 60000);
 
-// ===============================
+
+// ===========
 // Delete Post
-// ===============================
+// ===========
+
 function deletePost(postId) {
     const data = getData();
     data.posts = data.posts.filter(p => p.id !== postId);
@@ -453,9 +502,10 @@ function deletePost(postId) {
 }
 
 
-// ===============================
+// ==============
 // Comment System
-// ===============================
+// ==============
+
 function toggleCommentBox(postId) {
     const box = document.getElementById(`comment-box-${postId}`);
     if (box) {
@@ -486,17 +536,19 @@ function addComment(postId) {
 }
 
 
-// ===============================
+// =======================================
 // Temporary comments function for profile
-// ===============================
+// =======================================
+
 function showComments(postId) {
     alert("Comments view is not connected yet for profile posts.");
 }
 
 
-// ===============================
+// ========================
 // Follow / Unfollow System
-// ===============================
+// ========================
+
 function toggleFollow(author) {
     const data = getData();
     const currentUser = localStorage.getItem("currentUser");
@@ -522,9 +574,10 @@ function toggleFollow(author) {
 }
 
 
-// ===============================
+// ===================
 // Page Initialization
-// ===============================
+// ===================
+
 if (document.getElementById("user-posts-list")) {
     loadUserPosts();
 }
