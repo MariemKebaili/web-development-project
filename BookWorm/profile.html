@@ -82,7 +82,9 @@
     </form>
   </section>
 
-  <section class="create-post-section">
+  <button id="toggle-create-post-btn">Create Post</button>
+
+  <section class="create-post-section hidden" id="create-post-section">
     <h3>Create a Post</h3>
     <textarea id="post-input" placeholder="Share a book quote or thought..." rows="3"></textarea>
     <button id="post-btn">Post</button>
@@ -91,21 +93,6 @@
   <section class="profile-main-feed" id="content-area">
     <div id="user-posts-list">
         <p class="empty-msg">No posts yet. Start sharing your favorite quotes!</p>
-    </div>
-
-    <div id="post-detail" class="hidden">
-      <h3>Post</h3>
-      <p id="detail-text"></p>
-
-      <button id="delete-button" class="delete-btn">Delete Post</button>
-
-      <h4>Comments</h4>
-      <div id="comments-list"></div>
-
-      <input type="text" id="comment-input" placeholder="Add a comment">
-      <button id="add-comment-btn">Add Comment</button>
-
-      <button id="close-detail-btn">Close</button>
     </div>
   </section>
 </main>

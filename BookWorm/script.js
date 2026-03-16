@@ -184,6 +184,15 @@ if (postBtn) {
     });
 }
 
+const togglePostBtn = document.getElementById("toggle-create-post-btn");
+const createPostSection = document.getElementById("create-post-section");
+
+if (togglePostBtn) {
+  togglePostBtn.addEventListener("click", () => {
+    createPostSection.classList.toggle("hidden");
+  });
+}
+
 
 // ===============
 // Load User Posts
@@ -220,6 +229,8 @@ function loadUserPosts() {
                 <button class="comment-btn" onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
                 <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
             </div>
+
+            <div class="comments-section" id="comments-${post.id}" style="display:none;"></div>
         `;
 
         postList.appendChild(div);
@@ -540,8 +551,29 @@ function addComment(postId) {
 // Temporary comments function for profile
 // =======================================
 
-function showComments(postId) {
-    alert("Comments view is not connected yet for profile posts.");
+function showComments(postId){
+    const data = getData();
+    const post = data.posts.find(p => p.id === postId);
+    if(!post) return;
+
+    const commentsDiv = document.getElementById("comments-" + postId);
+
+    if(!commentsDiv) return;
+
+    // toggle show/hide
+    if(commentsDiv.style.display === "none"){
+        commentsDiv.style.display = "block";
+    } else {
+        commentsDiv.style.display = "none";
+    }
+
+    commentsDiv.innerHTML = "";
+
+    post.comments.forEach(comment => {
+        const p = document.createElement("p");
+        p.innerHTML = `<strong>${comment.author}</strong>: ${comment.text}`;
+        commentsDiv.appendChild(p);
+    });
 }
 
 
