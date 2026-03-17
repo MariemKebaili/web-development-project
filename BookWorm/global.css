@@ -130,6 +130,49 @@ header{
   gap:2rem;
 }
 
+/* ===== Feed Tabs ===== */
+
+.feed-tabs{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  margin-bottom:2rem;
+  flex-wrap:wrap;
+}
+
+.feed-tab{
+  text-decoration:none;
+  background-color:var(--color-background);
+  color:var(--color-primary);
+  padding:0.6rem 1rem;
+  border:none;
+  border-radius:var(--radius-md);
+  box-shadow:var(--shadow-sm);
+  transition:0.3s;
+  font-family:var(--font-primary);
+  font-size:1rem;
+  cursor:pointer;
+}
+
+.feed-tab:hover{
+  background-color:var(--color-primary);
+  color:var(--color-background);
+  transform:translateY(-2px);
+}
+
+.feed-tab.active{
+  background-color:var(--color-primary);
+  color:var(--color-background);
+}
+
+#feed-posts{
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+}
+
+
 
 /* ===== Post Card ===== */
 
