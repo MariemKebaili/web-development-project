@@ -1,8 +1,5 @@
-// =======================================
 // Bookworm Social Platform
-// Handles authentication, posts, feed,
-// likes, comments, and follow system
-// =======================================
+// Handles authentication, posts, feed, likes, comments, and follow system
 
 // ==============================================
 // Local Storage Initialization
@@ -17,6 +14,7 @@ if (!localStorage.getItem("bookwormData")) {
   localStorage.setItem("bookwormData", JSON.stringify(initialData));
 }
 
+
 // ===============================
 // Page Protection
 // Redirect if user not logged in
@@ -27,6 +25,31 @@ const currentUser = localStorage.getItem("currentUser");
 if (!currentUser && window.location.pathname.includes("profile.html")) {
   window.location.href = "login.html";
 }
+
+
+// ========================
+// Global State for Filters
+// ========================
+
+let currentFilters = {
+  author: "",
+  book: ""
+};
+
+
+//======================================================
+// Utility function to get unique values for suggestions
+// =====================================================
+
+function getUniqueValues(key){
+  const data = getData();
+  const values = data.posts
+    .map(post => post[key])
+    .filter(v => v && v.trim() !== "");
+
+  return [...new Set(values)];
+}
+
 
 // =====================
 // Data Helper Functions
@@ -40,6 +63,7 @@ function getData() {
 function saveData(data) {
   localStorage.setItem("bookwormData", JSON.stringify(data));
 }
+
 
 // =====================================
 // Data Migration
@@ -77,6 +101,7 @@ function migrateOldData() {
 migrateOldData();
 let activeFeedTab = "following";
 
+
 // ===========================
 // User Registration (Sign Up)
 // ===========================
@@ -113,10 +138,11 @@ if (signupForm) {
     data.users.push(newUser);
     saveData(data);
 
-    alert("Account created!");
+    alert("Account created!🎉");
     window.location.href = "login.html";
   });
 }
+
 
 // ==========
 // User Login
@@ -145,6 +171,7 @@ if (loginForm) {
   });
 }
 
+
 // ===========
 // Create Post
 // ===========
@@ -155,6 +182,8 @@ if (postBtn) {
   postBtn.addEventListener("click", function () {
     const postInput = document.getElementById("post-input");
     const postText = postInput.value.trim();
+    const authorInput = document.getElementById("author-input").value.trim();
+    const bookInput = document.getElementById("book-input").value.trim();
 
     if (postText === "") return;
 
@@ -165,6 +194,8 @@ if (postBtn) {
       id: Date.now(),
       author: currentUser,
       text: postText,
+      authorInput: authorInput,
+      bookInput: bookInput,
       likedBy: [],
       comments: [],
       timestamp: Date.now(),
@@ -174,6 +205,10 @@ if (postBtn) {
     saveData(data);
 
     postInput.value = "";
+
+    document.getElementById("author-input").value = "";
+    document.getElementById("book-input").value = "";
+
     loadUserPosts();
     loadGlobalFeed();
     updateProfileUI();
@@ -188,6 +223,7 @@ if (togglePostBtn) {
     createPostSection.classList.toggle("hidden");
   });
 }
+
 
 // ===============
 // Load User Posts
@@ -219,11 +255,16 @@ function loadUserPosts() {
     div.classList.add("post");
 
     div.innerHTML = `
-            <p>${post.text}</p>
+            <p>
+              ${post.text}
+              <strong>- ${post.authorInput || "Unknown Author"}
+              ${post.bookInput ? `| ${post.bookInput}` : ""}</strong>
+            </p>
+
             <div class="post-actions">
-                <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likedBy.length}</button>
-                <button class="comment-btn" onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
-                <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+              <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likedBy.length}</button>
+              <button class="comment-btn" onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
+              <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
             </div>
 
             <div class="comments-section" id="comments-${post.id}" style="display:none;"></div>
@@ -232,6 +273,7 @@ function loadUserPosts() {
     postList.appendChild(div);
   });
 }
+
 
 // ===============
 // Profile Editing
@@ -327,6 +369,7 @@ if (cancelEditBtn) {
   });
 }
 
+
 // =============
 // Logout System
 // =============
@@ -335,6 +378,7 @@ const logoutBtn = document.getElementById("logout-btn");
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
+
     // remove logged-in user
     localStorage.removeItem("currentUser");
 
@@ -342,6 +386,7 @@ if (logoutBtn) {
     window.location.href = "login.html";
   });
 }
+
 
 // =================
 // Update Profile UI
@@ -373,6 +418,7 @@ function updateProfileUI() {
   if (followerCount) followerCount.textContent = user.followers.length;
   if (followingCount) followingCount.textContent = user.following.length;
 }
+
 
 // ===========
 // Global Feed
@@ -418,9 +464,10 @@ function initializeFeedTabs() {
   updateFeedTabsUI();
 }
 
-// ===========
-//
-// ===========
+
+// =============
+// Feed Loading
+// =============
 
 function loadGlobalFeed() {
   const feedPostsContainer = document.getElementById("feed-posts");
@@ -472,6 +519,18 @@ function loadGlobalFeed() {
     return;
   }
 
+  postsToShow = postsToShow.filter(post => {
+    if(currentFilters.author && (!post.authorInput || !post.authorInput.toLowerCase().includes(currentFilters.author))){
+      return false;
+    }
+
+    if(currentFilters.book && (!post.bookInput || !post.bookInput.toLowerCase().includes(currentFilters.book))){
+      return false;
+    }
+    return true;
+  });
+
+
   postsToShow.forEach((post) => {
     if (!Array.isArray(post.likedBy)) {
       post.likedBy = [];
@@ -493,7 +552,11 @@ function loadGlobalFeed() {
             </div>
 
             <div class="post-content">
-                <p>${post.text}</p>
+                <p>
+                  ${post.text}
+                  <strong>- ${post.authorInput || "Unknown Author"}</strong>
+                  ${post.bookInput ? `<br><em>(${post.bookInput})</em>` : ""}
+                </p>
             </div>
 
             <div class="post-actions">
@@ -517,11 +580,128 @@ function loadGlobalFeed() {
   updateFeedTabsUI();
 }
 
-// =====================================
+
+// =======================================================
+// Filter Functionality
+// Filters posts by author name or book title in real-time
+// =======================================================
+
+const authorFilter = document.getElementById("filter-author");
+const bookFilter = document.getElementById("filter-book");
+const clearBtn = document.getElementById("clear-filters-btn");
+
+if(authorFilter){
+  authorFilter.addEventListener("input", () => {
+    currentFilters.author = authorFilter.value.toLowerCase();
+    loadGlobalFeed();
+  });
+}
+
+if(bookFilter){
+  bookFilter.addEventListener("input", () => {
+    currentFilters.book = bookFilter.value.toLowerCase();
+    loadGlobalFeed();
+  });
+}
+
+if(clearBtn){
+  clearBtn.addEventListener("click", () => {
+    currentFilters.author = "";
+    currentFilters.book = "";
+    authorFilter.value = "";
+    bookFilter.value = "";
+    loadGlobalFeed();
+  });
+}
+
+
+// =============================================
+// Author Suggestions
+// Shows dropdown of author names based on input
+// =============================================
+
+const authorInput = document.getElementById("filter-author");
+const authorBox = document.getElementById("author-suggestions");
+
+if(authorInput){
+  authorInput.addEventListener("input", () => {
+
+    const value = authorInput.value.toLowerCase();
+    authorBox.innerHTML = "";
+
+    if(value === "") return;
+
+    const authors = getUniqueValues("authorInput");
+
+    authors
+      .filter(a => a.toLowerCase().includes(value))
+      .forEach(a => {
+        const div = document.createElement("div");
+        div.textContent = a;
+
+        div.onclick = () => {
+          authorInput.value = a;
+          authorBox.innerHTML = "";
+          currentFilters.author = a.toLowerCase();
+          loadGlobalFeed();
+        };
+
+        authorBox.appendChild(div);
+      });
+  });
+}
+
+// Close suggestions dropdown when clicking outside
+
+document.addEventListener("click", (e) => {
+  if(!e.target.closest(".filter-sidebar")){
+    document.getElementById("author-suggestions").innerHTML = "";
+    document.getElementById("book-suggestions").innerHTML = "";
+  }
+});
+
+
+//=============================================
+// Book Suggestions
+// Shows dropdown of book titles based on input
+// ============================================
+
+const bookInput = document.getElementById("filter-book");
+const bookBox = document.getElementById("book-suggestions");
+
+if(bookInput){
+  bookInput.addEventListener("input", () => {
+
+    const value = bookInput.value.toLowerCase();
+    bookBox.innerHTML = "";
+
+    if(value === "") return;
+
+    const books = getUniqueValues("bookInput");
+
+    books
+      .filter(b => b.toLowerCase().includes(value))
+      .forEach(b => {
+        const div = document.createElement("div");
+        div.textContent = b;
+
+        div.onclick = () => {
+          bookInput.value = b;
+          bookBox.innerHTML = "";
+          currentFilters.book = b.toLowerCase();
+          loadGlobalFeed();
+        };
+
+        bookBox.appendChild(div);
+      });
+  });
+}
+
+
+// =============================================================
 // Like Post
-// One like per user only
-// first click like, second click unlike
-// =====================================
+// One like per user only: first click like, second click unlike
+// =============================================================
 
 function handleLike(postId) {
   const data = getData();
@@ -546,10 +726,9 @@ function handleLike(postId) {
   loadGlobalFeed();
 }
 
-// ===============================
+// ====================
 // Timestamp Formatting
-// Converts timestamp to "Just now", "5 min ago", "2 hr ago", etc.
-// ===============================
+// ====================
 
 function formatTimestamp(timestamp) {
   const now = Date.now();

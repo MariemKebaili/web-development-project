@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BookWorms - Feed</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BookWorms - Feed</title>
     
-    <link rel="stylesheet" href="global.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Lilita+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Lilita+One&display=swap" rel="stylesheet">
 </head>
 
 <body>    
-
 <header>
   <div class="nav-container">
 
@@ -23,80 +22,48 @@
       <img src="media/logo.png" alt="Logo" class="logo">
       <h1 class="site-name">Bookworms</h1>
     </div>
-    <nav  >
+
+    <nav class="nav">
       <ul class="nav-links">
+        <li class="divider">|</li>
         <li><a href="feed.html">Feed</a></li>
+        <li class="divider">|</li>
         <li><a href="profile.html">Profile</a></li>
-        <li><a href="signup.html">Sign up</a></li>
-        <li><a href="login.html" id="login-btn">Log in</a></li>
+        <li class="divider">|</li>
+        <li><a href="signup.html">Sign Up</a></li>
+        <li class="divider">|</li>
+        <li><a href="login.html" id="login-btn">Log In</a></li>
+        <li class="divider">|</li>
       </ul>
     </nav>
 
   </div>
 </header>
 
-  <main class="feed">
+<main class="feed-layout">
+
+  <aside class="filter-sidebar">
+    <h3>Filter Posts🔍</h3>
+
+    <input type="text" id="filter-author" placeholder="Search by author..">
+    <div id="author-suggestions" class="suggestions-box"></div>
+
+    <input type="text" id="filter-book" placeholder="Search by book..">
+    <div id="book-suggestions" class="suggestions-box"></div>
+
+    <button id="clear-filters-btn">Clear</button>
+  </aside>
+
+  <section class="feed">
 
     <div class="feed-tabs">
-      <button type="button" id="following-tab" class="feed-tab active">Following</button>
-      <button type="button" id="explore-tab" class="feed-tab">Explore</button>
+      <button type="button" id="following-tab" class="feed-tab active">Following👥</button>
+      <button type="button" id="explore-tab" class="feed-tab">Explore🔥</button>
     </div>
 
     <div id="feed-posts"></div>
-
-
-  <!-- <div class="post">
-    <div class="post-header">
-      <div class="author-info">
-        <span class="author-name">Paul bookman</span>
-        <button class="follow-btn">Unfollow</button>
-      </div>
-      <span class="timestamp">2 hours ago</span>
-    </div>
-
-    <div class="post-content">
-      <p>
-        It was the best of times, it was the worst of times – Charles Dickens
-      </p>
-    </div>
-
-    <div class="post-actions">
-      <button class="like-btn">❤️ 12</button>
-      <button class="comment-btn">💬 2</button>
-    </div>
-
-    <div class="comments-section">
-      <p><strong>Rima:</strong> Love this quote!</p>
-      <p><strong>Sara:</strong> Such a classic!</p>
-    </div>
-  </div>
-
-  <div class="post">
-  <div class="post-header">
-    <div class="author-info">
-      <span class="author-name">Rima Omar</span>
-      <button class="follow-btn">Unfollow</button>
-    </div>
-    <span class="timestamp">1 day ago</span>
-  </div>
-
-  <div class="post-content">
-    <p>
-      You see, but you do not observe – Sherlock Holmes
-    </p>
-  </div>
-
-  <div class="post-actions">
-    <button class="like-btn">❤️ 45</button>
-    <button class="comment-btn">💬 2</button>
-  </div>
-
-  <div class="comments-section">
-    <p><strong>John:</strong> Classic Sherlock wisdom!</p>
-    <p><strong>Sara:</strong> Always makes me think twice.</p>
-  </div>
-</div> -->
-
+    
+  </section>
 </main>
 
 <footer>
