@@ -554,8 +554,8 @@ function loadGlobalFeed() {
             <div class="post-content">
                 <p>
                   ${post.text}
-                  <strong>- ${post.authorInput || "Unknown Author"}</strong>
-                  ${post.bookInput ? `<br><em>(${post.bookInput})</em>` : ""}
+                  <strong>- ${post.authorInput || "Unknown Author"}
+                  ${post.bookInput ? ` | ${post.bookInput}` : ""}</strong>
                 </p>
             </div>
 
