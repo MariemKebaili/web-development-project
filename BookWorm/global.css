@@ -4,7 +4,10 @@
    ======================================== */
 
 
-/* ===== CSS Variables ===== */
+/* ===================================
+   VARIABLES (theme & design system)
+   =================================== */
+
 :root {
 
   /* Colors */
@@ -37,7 +40,7 @@
   --btn-hover-bg: var(--color-primary);
   --btn-hover-text: var(--color-background);
 
-  /* Delete button */
+  /* Delete Button */
   --delete-bg: #a34e4e;
   --delete-hover-bg: #a36c69;
 
@@ -47,30 +50,8 @@
   --input-border: var(--color-primary);
 }
 
-
-/* ===== Reset ===== */
-*{
-  box-sizing: border-box;
-}
-
-body{
-  margin: 0;
-  font-family: var(--font-primary);
-  background: var(--color-background);
-  color: var(--color-primary);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  transition: background 0.4s ease, color 0.4s ease;
-}
-
-main{
-  flex: 1;
-}
-
 /* ===== Dark Mode ===== */
-
-.dark-mode{
+.dark-mode {
   --color-background: #1a1625;
   --color-surface: #2a233b;
   --color-primary: #ddd4cb;
@@ -87,21 +68,69 @@ main{
   --input-border: #b8a8d9;
 }
 
-.post, .filter-sidebar, .feed-tabs, .signup-container, .profile-header-top, #edit-form-container, .create-post-section{
+
+/* ============
+   BASE / RESET
+   ============ */
+
+*{
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-primary);
+  background: var(--color-background);
+  color: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+main {
+  flex: 1;
+}
+
+.post, .filter-sidebar, .feed-tabs, .signup-container, .profile-header-top, #edit-form-container, .create-post-section {
   transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 
-/* ========================================
-   HEADER
-   ======================================== */
+/* ===============
+   GLOBAL ELEMENTS
+   =============== */
 
-header{
+/* ===== Input & Textarea =====*/
+input, textarea {
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  color: var(--input-text);
+  font-family: var(--font-mono);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-text);
+  opacity: 0.7;
+}
+
+.hidden {
+  display: none;
+}
+
+
+/* ===================================
+   LAYOUT 
+   =================================== */
+
+/* ===== HEADER ===== */
+header {
   padding: 1rem 2rem;
   background: linear-gradient(to right, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 100%);
 }
 
-.nav-container{
+.nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -110,32 +139,31 @@ header{
   width: 100%;
 }
 
-.logo-section{
+.logo-section {
   display: flex;
   align-items: center;
   gap: 0.8rem;
 }
 
-.logo{
+.logo {
   width: 150px;
   height: auto;
   object-fit: contain;
 }
 
-.site-name{
+.site-name {
   font-size: 3rem;
   color: var(--color-primary);
 }
 
 /* ===== Navigation ===== */
-
-.nav{
+.nav {
   flex: 1;
   display: flex;
   justify-content: flex-end;
 }
 
-.nav-links{
+.nav-links {
   list-style: none;
   display: flex;
   align-items: center;
@@ -145,28 +173,27 @@ header{
   font-size: 2rem;
 }
 
-.nav-links a{
+.nav-links a {
   text-decoration: none;
   color: var(--color-primary);
   transition: 0.2s;
   font-weight: 500;
 }
 
-.nav-links a:hover{
+.nav-links a:hover {
   color: var(--color-background);
 }
 
-.nav-links li{
+.nav-links li {
   display: flex;
   align-items: center;
 }
 
-.divider{
+.divider {
   color: var(--color-secondary);
 }
 
 /* ===== Dark Mode Toggle ===== */
-
 #dark-mode-toggle {
   border: none;
   background: var(--color-primary);
@@ -182,11 +209,11 @@ header{
 }
 
 
-/* ========================================
-   FEED
-   ======================================== */
+/* ===================================
+   FEED PAGE
+   =================================== */
 
-.feed-layout{
+.feed-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 2rem;
@@ -196,7 +223,7 @@ header{
   padding: 2rem;
 }
 
-.feed{
+.feed {
   width: 100%;
   max-width: none;
   padding: 2rem;
@@ -206,8 +233,7 @@ header{
 }
 
 /* ===== Sidebar ===== */
-
-.filter-sidebar{
+.filter-sidebar {
   background: var(--color-surface);
   padding: 1.5rem;
   border-radius: var(--radius-md);
@@ -221,33 +247,28 @@ header{
   align-items: stretch;
 }
 
-.filter-sidebar h3{
+.filter-sidebar h3 {
   margin-bottom: 0.5rem;
 }
 
-.filter-sidebar input{
+.filter-sidebar input {
   width: 100%;
   display: block;
   margin: 0.6rem 0;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  color: var(--input-text);
-  font-family: var(--font-mono);
   transition: 0.2s;
 }
 
-.filter-sidebar input:focus{
+.filter-sidebar input:focus {
   outline: none;
   border-color: var(--color-secondary);
   transform: scale(1.02);
 }
 
-.suggestions-box{
-  position: relative
+.suggestions-box {
+  position: relative;
 }
 
-.suggestions-box div{
+.suggestions-box div {
   background: var(--color-background);
   border: 1px solid var(--input-border);
   padding: 0.4rem;
@@ -257,12 +278,12 @@ header{
   transition: 0.2s;
 }
 
-.suggestions-box div:hover{
+.suggestions-box div:hover {
   background: var(--color-primary);
   color: var(--color-background);
 }
 
-#clear-filters-btn{
+#clear-filters-btn {
   margin-top: 0.5rem;
   padding: 0.6rem;
   border: none;
@@ -274,13 +295,12 @@ header{
   font-family: var(--font-primary);
 }
 
-#clear-filters-btn:hover{
+#clear-filters-btn:hover {
   background: var(--color-secondary);
 }
 
 /* ===== Feed Tabs ===== */
-
-.feed-tabs{
+.feed-tabs {
   width: 100%;
   display: flex;
   gap: 1rem;
@@ -291,7 +311,7 @@ header{
   border-radius: var(--radius-md);
 }
 
-.feed-tab{
+.feed-tab {
   flex: 1;
   text-decoration: none;
   background: var(--color-background);
@@ -306,26 +326,25 @@ header{
   cursor: pointer;
 }
 
-.feed-tab:hover{
+.feed-tab:hover {
   background: var(--color-primary);
   color: var(--color-background);
   transform: translateY(-2px);
 }
 
-.feed-tab.active{
+.feed-tab.active {
   background: var(--color-primary);
   color: var(--color-background);
 }
 
-#feed-posts{
+#feed-posts {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
 /* ===== Post Card ===== */
-
-.post{
+.post {
   width: 100%;
   background: var(--color-surface);
   border: 4px solid var(--color-primary);
@@ -335,43 +354,37 @@ header{
   transition: 0.25s;
 }
 
-.post:hover{
+.post:hover {
   transform: translateY(-3px);
 }
 
-.post p{
+.post p {
   font-family: var(--font-mono);
   font-size: 1.2rem;
   line-height: 1.8;
 }
 
-.post p strong{
+.post p strong {
   font-family: var(--font-primary);
   font-size: 0.95rem;
 }
 
 /* ===== Post Header ===== */
-
-.post-header{
+.post-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
-.author-info{
+.author-info {
   display: flex;
   align-items: center;
   gap: 0.7rem;
 }
 
-.author-name{
-  font-size: 1.2rem;
-}
-
 /* ===== Follow Button ===== */
-
-.follow-btn{
+.follow-btn {
   padding: 0.3rem 0.7rem;
   border: none;
   border-radius: var(--radius-md);
@@ -381,35 +394,31 @@ header{
   transition: 0.3s;
 }
 
-.follow-btn:hover{
+.follow-btn:hover {
   background: var(--color-primary);
 }
 
 /* ===== Timestamp ===== */
-
-.timestamp{
+.timestamp {
   font-size: 0.9rem;
   color: var(--color-secondary);
 }
 
 /* ===== Post Content ===== */
-
-.post-content p{
+.post-content p {
   font-family: var(--font-mono);
   font-size: 1.05rem;
   margin: 1rem 0;
 }
 
 /* ===== Post Actions ===== */
-
-.post-actions{
+.post-actions {
   display: flex;
-  gap: 0.6rem;
+  gap: var(--spacing-sm);
   margin-bottom: 0.6rem;
 }
 
-.like-btn,
-.comment-btn{
+.like-btn, .comment-btn {
   border: none;
   padding: 0.5rem 0.8rem;
   border-radius: var(--radius-md);
@@ -420,44 +429,31 @@ header{
   transition: 0.3s;
 }
 
-.like-btn:hover,
-.comment-btn:hover{
+.like-btn:hover, .comment-btn:hover {
   background: var(--btn-hover-bg);
   color: var(--btn-hover-text);
 }
 
 /* ===== Comments ===== */
-
-.comments-section p{
+.comments-section p {
   margin: 0.2rem 0;
   font-size: 0.95rem;
   color: var(--color-primary);
   padding-top: 0.5rem;
 }
 
-.comment-input{
+.comment-input {
   padding: 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  color: var(--input-text);
   margin-top: 0.5rem;
-  font-family: var(--font-mono);
 }
 
-.comment-input:focus{
+.comment-input:focus {
   outline: none;
-  border-color: var(--input-focus-border);
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--input-text);
-  opacity: 0.7;
 }
 
 .author-name {
   cursor: pointer;
+  font-size: 1.2rem;
   transition: 0.2s;
 }
 
@@ -471,7 +467,7 @@ textarea::placeholder {
    LOGIN & SIGNUP
    ======================================== */
 
-.signup-container{
+.signup-container {
   width: 100%;
   max-width: 700px;
   margin: auto;
@@ -482,32 +478,27 @@ textarea::placeholder {
   box-shadow: var(--shadow-md);
 }
 
-.signup-container h2{
+.signup-container h2 {
   text-align: center;
   margin-bottom: 3rem;
   font-size: 2.5rem;
 }
 
-.signup-container label{
+.signup-container label {
   display: block;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
   font-size: larger;
 }
 
-.signup-container input{
+.signup-container input {
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.3rem;
   margin-bottom: 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  font-family: var(--font-mono);
-  color: var(--input-text);
-  background: var(--input-bg);
 }
 
-.signup-container button{
+.signup-container button {
   width: 100%;
   padding: 0.8rem;
   border: none;
@@ -521,33 +512,30 @@ textarea::placeholder {
   margin-top: 4rem;
 }
 
-.signup-container button:hover{
+.signup-container button:hover {
   background: var(--color-secondary);
 }
 
-.login-link,
-.signup-link{
+.login-link, .signup-link {
   margin-top: 1rem;
   text-align: center;
 }
 
-.login-link a,
-.signup-link a{
+.login-link a, .signup-link a {
   color: var(--color-secondary);
   text-decoration: none;
 }
 
-.login-link a:hover,
-.signup-link a:hover{
+.login-link a:hover, .signup-link a:hover {
   text-decoration: underline;
 }
 
 
-/* ========================================
+/* ===================================
    PROFILE PAGE
-   ======================================== */
+   =================================== */
 
-.profile-container{
+.profile-container {
   width: 100%;
   max-width: 900px;
   margin: auto;
@@ -557,7 +545,7 @@ textarea::placeholder {
   gap: 1rem;
 }
 
-.profile-header-top{
+.profile-header-top {
   display: flex;
   flex-direction: column;
   background: linear-gradient(to bottom, var(--color-header-footer) 0%, var(--color-surface) 100%, var(--color-header-footer) 60%);
@@ -567,13 +555,13 @@ textarea::placeholder {
   margin-bottom: 2rem;
 }
 
-.photo-name-row{
+.photo-name-row {
   display: flex;
   align-items: center;
   gap: 1.5rem;
 }
 
-.profile-photo-large{
+.profile-photo-large {
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -583,24 +571,24 @@ textarea::placeholder {
   transition: 0.3s ease;
 }
 
-.profile-photo-large:hover{
+.profile-photo-large:hover {
   transform: scale(1.05);
 }
 
-.account-name{
+.account-name {
   font-size: 1.6rem;
 }
 
-.username-row{
+.username-row {
   margin-top: 0.5rem;
   color: var(--color-secondary);
 }
 
-.bio-section{
+.bio-section {
   margin-top: 0.8rem;
 }
 
-.stats-inline-row{
+.stats-inline-row {
   display: flex;
   gap: 2rem;
   margin-top: 1rem;
@@ -610,11 +598,11 @@ textarea::placeholder {
 width: 100%;
 }
 
-.stat-item{
+.stat-item {
   font-size: 1rem;
 }
 
-#edit-profile-btn{
+#edit-profile-btn {
   width: fit-content;
   margin-top: 1rem;
   padding: 0.6rem 1rem;
@@ -626,36 +614,29 @@ width: 100%;
   cursor: pointer;
 }
 
-#edit-profile-btn:hover{
+#edit-profile-btn:hover {
   background: var(--color-secondary);
 }
 
 /* ===== Edit Profile Form ===== */
-
-#edit-form-container{
+#edit-form-container {
   background: var(--color-surface);
   padding: 1.5rem;
   border-radius: var(--radius-md);
   margin-bottom: 2rem;
 }
 
-#edit-form-container input, #edit-form-container textarea{
+#edit-form-container input, #edit-form-container textarea {
   width: 100%;
   padding: 0.6rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  font-family: var(--font-mono);
   margin-bottom: 0.8rem;
-  color: var(--input-text);
 }
 
-#edit-form-container input:focus, #edit-form-container textarea:focus{
+#edit-form-container input:focus, #edit-form-container textarea:focus {
   outline: none;
-  border-color: var(--input-focus-border);
 }
 
-#edit-form-container button{
+#edit-form-container button {
   padding: 0.6rem 1rem;
   border: none;
   border-radius: var(--radius-md);
@@ -668,17 +649,12 @@ width: 100%;
   color: var(--btn-bg);
 }
 
-#edit-form-container button:hover{
+#edit-form-container button:hover {
   background: var(--color-secondary);
 }
 
-.hidden{
-  display: none;
-}
-
 /* ===== Logout Button ===== */
-
-#logout-btn{
+#logout-btn {
   width: fit-content;
   margin-top: 0.7rem;
   padding: 0.6rem 1rem;
@@ -691,23 +667,20 @@ width: 100%;
   transition: 0.3s;
 }
 
-#logout-btn:hover{
+#logout-btn:hover {
   background: var(--delete-hover-bg);
   color: var(--color-primary);
 }
 
-.profile-btn-row{
+.profile-btn-row {
   display: flex;
   gap: 0.8rem;
   margin-top: 1rem;
   justify-content: flex-start;
 }
 
-/* ========================================
-   CREATE POST SECTION
-   ======================================== */
-
-.create-post-section{
+/* ===== Create Post Section ===== */
+.create-post-section {
   background: var(--color-surface);  
   padding: 1.5rem;
   border-radius: var(--radius-md);
@@ -716,12 +689,12 @@ width: 100%;
   margin-top: 0;
 }
 
-.create-post-section h3{
+.create-post-section h3 {
   margin-top: 0rem;
   margin-bottom: 1.5rem;
 }
 
-#create-post-form textarea{
+#create-post-form textarea {
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.5rem;
@@ -730,38 +703,28 @@ width: 100%;
   border: 1px solid var(--input-border);
 }
 
-#post-input{
+#post-input {
   width: 100%;
   padding: 0.7rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
   resize: none; 
-  font-family: var(--font-mono);
-  color: var(--input-text);
 }
 
-#post-input:focus{
+#post-input:focus {
   outline: none;
   border-color: var(--color-secondary);
 }
 
-#author-input,
-#book-input{
+#author-input, #book-input {
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--input-border);
-  background: var(--input-bg);
-  font-family: var(--font-mono);
+
 }
 
-#post-btn{
+#post-btn {
   align-self: flex-start;
   padding: 0.5rem 1.2rem;
   border: none;
-  border-radius: 5px;
   border-radius: var(--radius-md);
   background: var(--color-primary);
   font-family: var(--font-primary);
@@ -770,16 +733,12 @@ width: 100%;
   transition: 0.3s;
 }
 
-#post-btn:hover{
+#post-btn:hover {
   background: var(--color-secondary);
 }
 
-
-/* ========================================
-   USER POSTS AREA
-   ======================================== */
-
-#toggle-create-post-btn{
+/* ===== User Posts Area ===== */
+#toggle-create-post-btn {
   padding: 0.6rem 1rem;
   border: none;
   border-radius: var(--radius-md);
@@ -788,41 +747,38 @@ width: 100%;
   font-family: var(--font-primary);
   cursor: pointer;
   margin-bottom: 1rem;
-  grid-column: auto;
   width: 100%;
 }
 
-#toggle-create-post-btn:hover{
+#toggle-create-post-btn:hover {
   background: var(--color-secondary);
 }
 
-#user-posts-list{
+#user-posts-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.empty-msg{
+.empty-msg {
   text-align: center;
   color: var(--color-secondary);
   font-style: italic;
 }
 
-/* comments section under post */
-
-.comments-section{
+/* ===== Comments Section Under Post ===== */
+.comments-section {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
   border-top: 1px solid var(--color-secondary);
 }
 
-.comments-section p{
+.comments-section p {
   font-size: 0.95rem;
   margin: 0.3rem 0;
 }
 
-/* Comment actions (like, delete) */
-
+/* ===== Comment Actions (like & delete) ===== */
 .comment-actions {
   display: flex;
   gap: 0.4rem;
@@ -830,7 +786,7 @@ width: 100%;
   flex-shrink: 0;
 }
 
-.comment-actions button {
+.comment-actions .like-btn {
   border: none;
   background: var(--btn-bg);
   color: var(--btn-text);
@@ -840,20 +796,9 @@ width: 100%;
   font-family: var(--font-primary);
 }
 
-.comment-actions button:hover {
+.comment-actions .like-btn:hover {
   background: var(--btn-hover-bg);
   color: var(--btn-hover-text);
-}
-
-.comment-actions .delete-btn {
-  background: var(--delete-bg);
-  color: var(--color-background);
-  padding: 0.2rem 0.5rem;
-  font-size: 0.8rem;
-}
-
-.comment-actions .delete-btn:hover {
-  background: var(--delete-hover-bg);
 }
 
 .comment-row {
@@ -862,20 +807,11 @@ width: 100%;
   align-items: center;
 }
 
-.comment-row span{
+.comment-row span {
   flex: 1;
 }
 
-.comment-actions{
-  display: flex;
-  gap: 0.4rem;
-}
-
-
-/* ========================================
-   DELETE BUTTON
-   ======================================== */
-
+/* ===== Delete Button ===== */
 .delete-btn {
   background: var(--delete-bg);
   color: var(--color-background);
@@ -883,6 +819,7 @@ width: 100%;
   padding: 0.5rem 1rem;
   border-radius: var(--radius-md);
   font-family: var(--font-primary);
+  font-size: 0.8rem;
   cursor: pointer;
   transition: 0.3s ease;
   box-shadow: var(--shadow-sm);
@@ -901,11 +838,11 @@ width: 100%;
 }
 
 
-/* ========================================
+/* ===================================
    FOOTER
-   ======================================== */
+   =================================== */
 
-footer{
+footer {
   background: linear-gradient(to left, var(--color-header-footer) 0%, var(--color-surface) 40%, var(--color-header-footer) 100%);
   text-align: center;
   padding: 1.5rem;
@@ -913,80 +850,77 @@ footer{
 }
 
 
-/* ========================================
-   RESPONSIVE (Mobile)
-   ======================================== */
+/* ===================================
+   RESPONSIVE
+   =================================== */
+   
+/* ===== Mobile ======= */
+@media (max-width:768px) {
 
-@media (max-width:768px){
-
-  header{
+  header {
     padding: 1rem;
   }
 
-  .nav-container{
+  .nav-container {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
 
-  .nav-links{
+  .nav-links {
     width: 100%;
     justify-content: flex-start;
   }
 
-  .feed-layout{
+  .feed-layout {
     grid-template-columns: 1fr;
   }
 
-  .feed{
+  .feed {
     padding: 1rem;
   }
 
-  .profile-container{
+  .profile-container {
     padding: 1rem;
   }
 
-  .photo-name-row{
+  .photo-name-row {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .stats-inline-row{
+  .stats-inline-row {
     gap: 1rem;
   }
 
-  .profile-header-top{
+  .profile-header-top {
     padding: 1.5rem;
   }
 
-  .profile-photo-large{
+  .profile-photo-large {
     width: 100px;
     height: 100px;
   }
 
-  .account-name{
+  .account-name {
     font-size: 1.4rem;
   }
 }
 
+/* ===== Desktop ===== */
+@media (min-width:1200px) {
 
-/* ========================================
-   Responsive (Desktop)
-   ======================================== */
-
-@media (min-width:1200px){
-
-  .feed{
+  .feed {
     max-width: 1100px;
   }
 
-  .feed-tab{
+  .feed-tab {
     font-size: 1.2rem;
     padding: 1rem 0;
   }
 
-  .profile-container{
+  .profile-container {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 2rem;
@@ -995,19 +929,19 @@ footer{
     align-items: start;
   }
 
-  #edit-form-container{
+  #edit-form-container {
     grid-column: 1;
   }
 
-  .profile-header-top{
+  .profile-header-top {
     grid-column: 1;
   }
 
-  #toggle-create-post-btn{
+  #toggle-create-post-btn {
     align-self: start;
   }
 
-  .posts-section{
+  .posts-section {
     grid-column: 2;
     display: flex;
     flex-direction: column;
@@ -1017,11 +951,11 @@ footer{
     top: 20px;
   }
 
-  .create-post-section{
+  .create-post-section {
     margin-top: 0;
   }
 
-  .profile-main-feed{
+  .profile-main-feed {
     grid-column: 2;
     display: flex;
     flex-direction: column;

@@ -11,14 +11,14 @@ if (!localStorage.getItem("bookwormData")) {
     users: [],
     posts: [],
   };
+
   localStorage.setItem("bookwormData", JSON.stringify(initialData));
 }
 
 
-// ===============================
-// Page Protection
-// Redirect if user not logged in
-// ===============================
+// ===================================================
+// Page Protection (Redirect if user is not logged in)
+// ===================================================
 
 const currentUser = localStorage.getItem("currentUser");
 
@@ -27,10 +27,9 @@ if (!currentUser && window.location.pathname.includes("profile.html")) {
 }
 
 
-// ================================
-// Dark Mode Toggle
-// Saves preference in localStorage
-// ================================
+// ===================================================
+// Dark Mode Toggle (Saves preference in localStorage)
+// ===================================================
 
 const darkModeBtn = document.getElementById("dark-mode-toggle");
 
@@ -46,7 +45,6 @@ if (darkModeBtn) {
   darkModeBtn.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 
-    // save preference
     if (document.body.classList.contains("dark-mode")) {
       localStorage.setItem("darkMode", "enabled");
     } else {
@@ -62,42 +60,16 @@ const savedMode = localStorage.getItem("darkMode");
 if (savedMode === "enabled") {
   document.body.classList.add("dark-mode");
 } else if (!savedMode) {
-  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    document.body.classList.add("dark-mode");
-  }
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      document.body.classList.add("dark-mode");
+    }
 }
 
 if (darkModeBtn) {
   updateDarkModeUI();
-}
-
-// load saved mode
-if (localStorage.getItem("darkMode") === "enabled") {
-  document.body.classList.add("dark-mode");
-}
-
-
-// ========================
-// Global State for Filters
-// ========================
-
-let currentFilters = {
-  author: "",
-  book: ""
-};
-
-
-//======================================================
-// Utility function to get unique values for suggestions
-// =====================================================
-
-function getUniqueValues(key){
-  const data = getData();
-  const values = data.posts
-    .map(post => post[key])
-    .filter(v => v && v.trim() !== "");
-
-  return [...new Set(values)];
 }
 
 
@@ -105,21 +77,21 @@ function getUniqueValues(key){
 // Data Helper Functions
 // =====================
 
+// gets all saved data from localStorage
 function getData() {
   const data = localStorage.getItem("bookwormData");
   return data ? JSON.parse(data) : { users: [], posts: [] };
 }
 
+// saves updated data back to localeStorage
 function saveData(data) {
   localStorage.setItem("bookwormData", JSON.stringify(data));
 }
 
 
-// =====================================
-// Data Migration
-// Converts old posts that used likes: 0
-// into the new likedBy: []
-// =====================================
+// ============================================================
+// Data Migration (Update old data to work with the new system)
+// ============================================================
 
 function migrateOldData() {
   const data = getData();
@@ -131,7 +103,6 @@ function migrateOldData() {
       changed = true;
     }
 
-    // remove old likes field if it exists
     if ("likes" in post) {
       delete post.likes;
       changed = true;
@@ -332,6 +303,17 @@ function loadUserPosts() {
   });
 }
 
+// Delete a Post (only by post owner)
+function deletePost(postId) {
+  const data = getData();
+  data.posts = data.posts.filter((p) => p.id !== postId);
+
+  saveData(data);
+  loadUserPosts();
+  loadGlobalFeed();
+  updateProfileUI();
+}
+
 
 // ===============
 // Profile Editing
@@ -375,16 +357,10 @@ if (saveProfileBtn) {
     const oldUsername = data.users[userIndex].username;
     const newUsername = document.getElementById("input-username").value.trim();
 
-    data.users[userIndex].photo = document
-      .getElementById("input-photo")
-      .value.trim();
-    data.users[userIndex].name = document
-      .getElementById("input-name")
-      .value.trim();
+    data.users[userIndex].photo = document.getElementById("input-photo").value.trim();
+    data.users[userIndex].name = document.getElementById("input-name").value.trim();
     data.users[userIndex].username = newUsername;
-    data.users[userIndex].bio = document
-      .getElementById("input-bio")
-      .value.trim();
+    data.users[userIndex].bio = document.getElementById("input-bio").value.trim();
 
     if (oldUsername !== newUsername) {
       data.posts.forEach((post) => {
@@ -428,19 +404,15 @@ if (cancelEditBtn) {
 }
 
 
-// =============
-// Logout System
-// =============
+// =====================================================================
+// Logout System (removes logged in user, and redirect it to login page)
+// =====================================================================
 
 const logoutBtn = document.getElementById("logout-btn");
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
-
-    // remove logged-in user
     localStorage.removeItem("currentUser");
-
-    // redirect to login page
     window.location.href = "login.html";
   });
 }
@@ -453,7 +425,7 @@ if (logoutBtn) {
 function updateProfileUI() {
   const data = getData();
   const currentUser = localStorage.getItem("currentUser");
-  const viewedUser = localStorage.getItem("viewProfile") || currentUser
+  const viewedUser = localStorage.getItem("viewProfile") || currentUser;
   const user = data.users.find((u) => u.username === viewedUser);
   const isOwnProfile = viewedUser === currentUser;
 
@@ -497,6 +469,7 @@ function updateProfileUI() {
 // Global Feed
 // ===========
 
+// randomly shuffle an array (used for explore feed)
 function shuffleArray(array) {
   const copy = [...array];
 
@@ -508,6 +481,7 @@ function shuffleArray(array) {
   return copy;
 }
 
+// updates active tab UI (following vs explore)
 function updateFeedTabsUI() {
   const followingTab = document.getElementById("following-tab");
   const exploreTab = document.getElementById("explore-tab");
@@ -518,6 +492,7 @@ function updateFeedTabsUI() {
   exploreTab.classList.toggle("active", activeFeedTab === "explore");
 }
 
+// set up click events for feed tabs
 function initializeFeedTabs() {
   const followingTab = document.getElementById("following-tab");
   const exploreTab = document.getElementById("explore-tab");
@@ -538,9 +513,9 @@ function initializeFeedTabs() {
 }
 
 
-// =============
+// ============
 // Feed Loading
-// =============
+// ============
 
 function loadGlobalFeed() {
   const feedPostsContainer = document.getElementById("feed-posts");
@@ -592,24 +567,31 @@ function loadGlobalFeed() {
     return;
   }
 
-  postsToShow = postsToShow.filter(post => {
-    if(currentFilters.author && (!post.authorInput || !post.authorInput.toLowerCase().includes(currentFilters.author))){
+  postsToShow = postsToShow.filter((post) => {
+    if (
+      currentFilters.author &&
+      (!post.authorInput ||
+        !post.authorInput.toLowerCase().includes(currentFilters.author))
+    ) {
       return false;
     }
 
-    if(currentFilters.book && (!post.bookInput || !post.bookInput.toLowerCase().includes(currentFilters.book))){
+    if (
+      currentFilters.book &&
+      (!post.bookInput ||
+        !post.bookInput.toLowerCase().includes(currentFilters.book))
+    ) {
       return false;
     }
     return true;
   });
-
 
   postsToShow.forEach((post) => {
     if (!Array.isArray(post.likedBy)) {
       post.likedBy = [];
     }
 
-    const authorUser = data.users.find(u => u.username === post.author);
+    const authorUser = data.users.find((u) => u.username === post.author);
     const displayName = authorUser?.name || post.author;
 
     const isFollowing = currentUserObj.following.includes(post.author);
@@ -648,49 +630,52 @@ function loadGlobalFeed() {
             </div>
 
             <div id="comments-${post.id}" class="comments-section">
-              ${post.comments.map((c, index) => {
-                if (!Array.isArray(c.likedBy)) {
-                  c.likedBy = [];
-                }
+              ${post.comments
+                .map((c, index) => {
+                  if (!Array.isArray(c.likedBy)) {
+                    c.likedBy = [];
+                  }
 
-                const commentUser = data.users.find(u => u.username === c.author);
-                const commentName = commentUser?.name || c.author;
+                  const commentUser = data.users.find(
+                    (u) => u.username === c.author,
+                  );
+                  const commentName = commentUser?.name || c.author;
 
-                const isLiked = c.likedBy.includes(currentUser);
-                return `
+                  const isLiked = c.likedBy.includes(currentUser);
+                  return `
                   <div class="comment-row">
                     <span>
                       <p><strong>${commentName}</strong>: ${c.text}</p>
                     </span>
 
                     <div class="comment-actions">
-                      <button onclick="toggleCommentLike(${post.id}, ${index})">${isLiked ? "❤️" : "🤍"} ${c.likedBy.length}</button>
+                      <button class="like-btn" onclick="toggleCommentLike(${post.id}, ${index})">${isLiked ? "❤️" : "🤍"} ${c.likedBy.length}</button>
                       ${c.author === currentUser ? `<button class="delete-btn" onclick="deleteComment(${post.id}, ${index})">X</button>` : ""}
                     </div>
-                  </div>`;}).join("")}
+                  </div>`;
+                })
+                .join("")}
             </div>`;
-    feedPostsContainer.appendChild(postDiv);});
-    updateFeedTabsUI();
+    feedPostsContainer.appendChild(postDiv);
+  });
+  updateFeedTabsUI();
 }
 
+// opens author profile from a post in feed
 function goToProfile(username) {
   localStorage.setItem("viewProfile", username);
   window.location.href = "profile.html";
 }
 
-function resetProfileView(){
+// goes back to user's own profile
+function resetProfileView() {
   localStorage.removeItem("viewProfile");
 }
 
-
-// ============================================
-// Delete Comment
-// Only comment author can delete their comment
-// ============================================
-
+// Delete a Comment (Only comment author can delete their comment)
 function deleteComment(postId, commentIndex) {
   const data = getData();
-  const post = data.posts.find(p => p.id === postId);
+  const post = data.posts.find((p) => p.id === postId);
 
   if (!post) return;
 
@@ -702,60 +687,48 @@ function deleteComment(postId, commentIndex) {
   showComments(postId);
 }
 
+// ==============================================================================
+// Filter Functionality for Sidebar (filters posts by author's name or book title)
+// ==============================================================================
 
-// =============================================================
-// Toggle Comment Like
-// One like per user only: first click like, second click unlike
-// =============================================================
-function toggleCommentLike(postId, commentIndex) {
+// Global State for Filters
+let currentFilters = {
+  author: "",
+  book: "",
+};
+
+// Get's unique values (no duplicates) from posts for (book / author) suggestions
+function getUniqueValues(key) {
   const data = getData();
-  const currentUser = localStorage.getItem("currentUser");
+  const values = data.posts
+    .map((post) => post[key])
+    .filter((v) => v && v.trim() !== "");
 
-  const post = data.posts.find(p => p.id === postId);
-  if (!post) return;
-
-  const comment = post.comments[commentIndex];
-  if (!comment) return;
-
-  if (!Array.isArray(comment.likedBy)) {
-    comment.likedBy = [];
-  }
-
-  if (comment.likedBy.includes(currentUser)) {
-    comment.likedBy = comment.likedBy.filter(u => u !== currentUser);
-  } else {
-    comment.likedBy.push(currentUser);
-  }
-
-  saveData(data);
-  loadGlobalFeed();
+  return [...new Set(values)];
 }
-
-
-// =======================================================
-// Filter Functionality
-// Filters posts by author name or book title in real-time
-// =======================================================
 
 const authorFilter = document.getElementById("filter-author");
 const bookFilter = document.getElementById("filter-book");
 const clearBtn = document.getElementById("clear-filters-btn");
 
-if(authorFilter){
+// Author filter
+if (authorFilter) {
   authorFilter.addEventListener("input", () => {
     currentFilters.author = authorFilter.value.toLowerCase();
     loadGlobalFeed();
   });
 }
 
-if(bookFilter){
+// Book filter
+if (bookFilter) {
   bookFilter.addEventListener("input", () => {
     currentFilters.book = bookFilter.value.toLowerCase();
     loadGlobalFeed();
   });
 }
 
-if(clearBtn){
+// Clear filters button (reset all filter values)
+if (clearBtn) {
   clearBtn.addEventListener("click", () => {
     currentFilters.author = "";
     currentFilters.book = "";
@@ -765,28 +738,20 @@ if(clearBtn){
   });
 }
 
-
-// =============================================
-// Author Suggestions
-// Shows dropdown of author names based on input
-// =============================================
-
+// Author Suggestions (Shows dropdown of author names based on input)
 const authorInput = document.getElementById("filter-author");
 const authorBox = document.getElementById("author-suggestions");
 
-if(authorInput){
+if (authorInput) {
   authorInput.addEventListener("input", () => {
-
     const value = authorInput.value.toLowerCase();
     authorBox.innerHTML = "";
 
-    if(value === "") return;
+    if (value === "") return;
 
     const authors = getUniqueValues("authorInput");
 
-    authors
-      .filter(a => a.toLowerCase().includes(value))
-      .forEach(a => {
+    authors.filter((a) => a.toLowerCase().includes(value)).forEach((a) => {
         const div = document.createElement("div");
         div.textContent = a;
 
@@ -802,37 +767,20 @@ if(authorInput){
   });
 }
 
-// Close suggestions dropdown when clicking outside
-
-document.addEventListener("click", (e) => {
-  if(!e.target.closest(".filter-sidebar")){
-    document.getElementById("author-suggestions").innerHTML = "";
-    document.getElementById("book-suggestions").innerHTML = "";
-  }
-});
-
-
-//=============================================
-// Book Suggestions
-// Shows dropdown of book titles based on input
-// ============================================
-
+// Book Suggestions (Shows dropdown of book titles based on input)
 const bookInput = document.getElementById("filter-book");
 const bookBox = document.getElementById("book-suggestions");
 
-if(bookInput){
+if (bookInput) {
   bookInput.addEventListener("input", () => {
-
     const value = bookInput.value.toLowerCase();
     bookBox.innerHTML = "";
 
-    if(value === "") return;
+    if (value === "") return;
 
     const books = getUniqueValues("bookInput");
 
-    books
-      .filter(b => b.toLowerCase().includes(value))
-      .forEach(b => {
+    books.filter((b) => b.toLowerCase().includes(value)).forEach((b) => {
         const div = document.createElement("div");
         div.textContent = b;
 
@@ -848,12 +796,16 @@ if(bookInput){
   });
 }
 
+// Close suggestions dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".filter-sidebar")) {
+    document.getElementById("author-suggestions").innerHTML = "";
+    document.getElementById("book-suggestions").innerHTML = "";
+  }
+});
 
-// =============================================================
-// Like Post
-// One like per user only: first click like, second click unlike
-// =============================================================
 
+// Like a Post (one like per user only: first click like, and second click unlike)
 function handleLike(postId) {
   const data = getData();
   const currentUser = localStorage.getItem("currentUser");
@@ -872,15 +824,37 @@ function handleLike(postId) {
   }
 
   saveData(data);
-
   loadUserPosts();
   loadGlobalFeed();
 }
 
-// ====================
-// Timestamp Formatting
-// ====================
+// Like a Comment (one like per user only: first click like, and second click unlike)
+function toggleCommentLike(postId, commentIndex) {
+  const data = getData();
+  const currentUser = localStorage.getItem("currentUser");
 
+  const post = data.posts.find((p) => p.id === postId);
+  if (!post) return;
+
+  const comment = post.comments[commentIndex];
+  if (!comment) return;
+
+  if (!Array.isArray(comment.likedBy)) {
+    comment.likedBy = [];
+  }
+
+  if (comment.likedBy.includes(currentUser)) {
+    comment.likedBy = comment.likedBy.filter((u) => u !== currentUser);
+  } else {
+    comment.likedBy.push(currentUser);
+  }
+
+  saveData(data);
+  loadGlobalFeed();
+  loadUserPosts;
+}
+
+// Post Timestamp Formatting (convert timestamp into readable time)
 function formatTimestamp(timestamp) {
   const now = Date.now();
   const diff = now - timestamp;
@@ -914,19 +888,6 @@ setInterval(() => {
   loadGlobalFeed();
 }, 60000);
 
-// ===========
-// Delete Post
-// ===========
-
-function deletePost(postId) {
-  const data = getData();
-  data.posts = data.posts.filter((p) => p.id !== postId);
-
-  saveData(data);
-  loadUserPosts();
-  loadGlobalFeed();
-  updateProfileUI();
-}
 
 // ==============
 // Comment System
@@ -939,6 +900,7 @@ function toggleCommentBox(postId) {
   }
 }
 
+// Add a Comment to a post
 function addComment(postId) {
   const input = document.getElementById(`comment-input-${postId}`);
   if (!input) return;
@@ -959,30 +921,28 @@ function addComment(postId) {
 
   saveData(data);
   input.value = "";
+
   loadGlobalFeed();
   loadUserPosts();
 }
 
-// =======================================
-// Temporary comments function for profile
-// =======================================
-
+// Show / Toggle Comments (Profile page)
 function showComments(postId) {
   const data = getData();
   const post = data.posts.find((p) => p.id === postId);
+
   if (!post) return;
 
   const commentsDiv = document.getElementById("comments-" + postId);
 
   if (!commentsDiv) return;
 
-  // toggle show/hide
-  commentsDiv.style.display = commentsDiv.style.display === "none" ? "block" : "none";
-
+  commentsDiv.style.display =
+    commentsDiv.style.display === "none" ? "block" : "none";
   commentsDiv.innerHTML = "";
 
   post.comments.forEach((comment, index) => {
-    const commentUser = data.users.find(u => u.username === comment.author);
+    const commentUser = data.users.find((u) => u.username === comment.author);
     const commentName = commentUser?.name || comment.author;
 
     const currentUser = localStorage.getItem("currentUser");
@@ -996,10 +956,17 @@ function showComments(postId) {
       </span>
       
       <div class="comment-actions">
-        ${comment.author === currentUser ? `<button class="delete-btn" onclick="deleteComment(${postId}, ${index})">X</button>` : ""}`;
+        ${
+          comment.author === currentUser
+            ? `<button class="delete-btn" onclick="deleteComment(${postId}, ${index})">X</button>`
+            : ""
+        }
+      </div>
+    `;
     commentsDiv.appendChild(div);
   });
 }
+
 
 // ========================
 // Follow / Unfollow System
@@ -1031,6 +998,7 @@ function toggleFollow(author) {
   updateProfileUI();
 }
 
+// Updates login button text (shows username if logged in)
 function updateLoginButton() {
   const loginBtn = document.getElementById("login-btn");
   if (!loginBtn) return;
@@ -1045,6 +1013,7 @@ function updateLoginButton() {
     loginBtn.href = "login.html";
   }
 }
+
 
 // ===================
 // Page Initialization
