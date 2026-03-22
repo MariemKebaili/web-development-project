@@ -30,6 +30,21 @@
   /* Fonts */
   --font-primary: "Lilita One", sans-serif;
   --font-mono: "Courier Prime", monospace;
+
+  /* Buttons */
+  --btn-bg: var(--color-background);
+  --btn-text: var(--color-primary);
+  --btn-hover-bg: var(--color-primary);
+  --btn-hover-text: var(--color-background);
+
+  /* Delete button */
+  --delete-bg: #a34e4e;
+  --delete-hover-bg: #a36c69;
+
+  /* Inputs */
+  --input-bg: rgb(240, 217, 207);
+  --input-text: var(--color-secondary);
+  --input-border: var(--color-primary);
 }
 
 
@@ -41,16 +56,39 @@
 body{
   margin: 0;
   font-family: var(--font-primary);
-  background-color: var(--color-background);
+  background: var(--color-background);
   color: var(--color-primary);
-
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 main{
   flex: 1;
+}
+
+/* ===== Dark Mode ===== */
+
+.dark-mode{
+  --color-background: #1a1625;
+  --color-surface: #2a233b;
+  --color-primary: #ddd4cb;
+  --color-secondary: #8b80a2;
+  --color-header-footer: #453f52;
+  --btn-bg: #3a2f5a;
+  --btn-text: #ddd4cb;
+  --btn-hover-bg: #5a4b8a;
+  --btn-hover-text: #ddd4cb;
+  --delete-bg: #8a3f3f;
+  --delete-hover-bg: #612424;
+  --input-bg: #766d89;
+  --input-text: #ece7e2;
+  --input-border: #b8a8d9;
+}
+
+.post, .filter-sidebar, .feed-tabs, .signup-container, .profile-header-top, #edit-form-container, .create-post-section{
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 
@@ -127,6 +165,22 @@ header{
   color: var(--color-secondary);
 }
 
+/* ===== Dark Mode Toggle ===== */
+
+#dark-mode-toggle {
+  border: none;
+  background: var(--color-primary);
+  color: var(--color-background);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-primary);
+}
+
+#dark-mode-toggle:hover {
+  background: var(--color-secondary);
+}
+
 
 /* ========================================
    FEED
@@ -154,7 +208,7 @@ header{
 /* ===== Sidebar ===== */
 
 .filter-sidebar{
-  background-color: var(--color-surface);
+  background: var(--color-surface);
   padding: 1.5rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -175,9 +229,10 @@ header{
   width: 100%;
   display: block;
   margin: 0.6rem 0;
-  border-radius: 6px;
-  border: 2px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-text);
   font-family: var(--font-mono);
   transition: 0.2s;
 }
@@ -193,18 +248,17 @@ header{
 }
 
 .suggestions-box div{
-  background-color: var(--color-background);
-  border: 1px solid var(--color-primary);
+  background: var(--color-background);
+  border: 1px solid var(--input-border);
   padding: 0.4rem;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   margin-top: 2px;
-  cursor: pointer;
   transition: 0.2s;
 }
 
 .suggestions-box div:hover{
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: var(--color-background);
 }
 
@@ -212,16 +266,16 @@ header{
   margin-top: 0.5rem;
   padding: 0.6rem;
   border: none;
-  border-radius: 6px;
-  background-color: var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
   color: var(--color-background);
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.25s ease;
   font-family: var(--font-primary);
 }
 
 #clear-filters-btn:hover{
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 /* ===== Feed Tabs ===== */
@@ -233,14 +287,14 @@ header{
   margin-bottom: 2rem;
   flex-wrap: wrap;
   padding: 0.5rem;
-  background-color: var(--color-surface);
+  background: var(--color-surface);
   border-radius: var(--radius-md);
 }
 
 .feed-tab{
   flex: 1;
   text-decoration: none;
-  background-color: var(--color-background);
+  background: var(--color-background);
   color: var(--color-primary);
   padding :0.6rem 1rem;
   border: none;
@@ -253,13 +307,13 @@ header{
 }
 
 .feed-tab:hover{
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: var(--color-background);
   transform: translateY(-2px);
 }
 
 .feed-tab.active{
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: var(--color-background);
 }
 
@@ -273,8 +327,8 @@ header{
 
 .post{
   width: 100%;
-  background-color: var(--color-surface);
-  border: 8px solid var(--color-primary);
+  background: var(--color-surface);
+  border: 4px solid var(--color-primary);
   border-radius: var(--radius-md);
   padding: 1.5rem;
   box-shadow: var(--shadow-lg);
@@ -320,15 +374,15 @@ header{
 .follow-btn{
   padding: 0.3rem 0.7rem;
   border: none;
-  border-radius: 6px;
-  background-color: var(--color-secondary);
+  border-radius: var(--radius-md);
+  background: var(--color-secondary);
   color: var(--color-background);
   cursor: pointer;
   transition: 0.3s;
 }
 
 .follow-btn:hover{
-  background-color: var(--color-primary);
+  background: var(--color-primary);
 }
 
 /* ===== Timestamp ===== */
@@ -358,8 +412,9 @@ header{
 .comment-btn{
   border: none;
   padding: 0.5rem 0.8rem;
-  border-radius: 6px;
-  background-color: var(--color-background);
+  border-radius: var(--radius-md);
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-family: var(--font-primary);
   cursor: pointer;
   transition: 0.3s;
@@ -367,8 +422,8 @@ header{
 
 .like-btn:hover,
 .comment-btn:hover{
-  background-color: var(--color-primary);
-  color: var(--color-background);
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-text);
 }
 
 /* ===== Comments ===== */
@@ -382,16 +437,33 @@ header{
 
 .comment-input{
   padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-text);
   margin-top: 0.5rem;
   font-family: var(--font-mono);
 }
 
 .comment-input:focus{
   outline: none;
-  border-color: var(--color-secondary);
+  border-color: var(--input-focus-border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-text);
+  opacity: 0.7;
+}
+
+.author-name {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.author-name:hover {
+  text-decoration: underline;
+  color: var(--color-secondary);
 }
 
 
@@ -428,10 +500,11 @@ header{
   padding: 0.6rem;
   margin-top: 0.3rem;
   margin-bottom: 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
   font-family: var(--font-mono);
+  color: var(--input-text);
+  background: var(--input-bg);
 }
 
 .signup-container button{
@@ -439,7 +512,7 @@ header{
   padding: 0.8rem;
   border: none;
   border-radius: var(--radius-md);
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: var(--color-background);
   font-family: var(--font-primary);
   font-size: 1rem;
@@ -449,7 +522,7 @@ header{
 }
 
 .signup-container button:hover{
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 .login-link,
@@ -505,6 +578,13 @@ header{
   height: 120px;
   border-radius: 50%;
   object-fit: cover;
+  border: 4px solid var(--color-primary);
+  box-shadow: 0 0 4px var(--color-primary);
+  transition: 0.3s ease;
+}
+
+.profile-photo-large:hover{
+  transform: scale(1.05);
 }
 
 .account-name{
@@ -539,21 +619,21 @@ width: 100%;
   margin-top: 1rem;
   padding: 0.6rem 1rem;
   border: none;
-  border-radius: 6px;
-  background-color: var(--color-primary);
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
   font-family: var(--font-primary);
   color: var(--color-background);
   cursor: pointer;
 }
 
 #edit-profile-btn:hover{
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 /* ===== Edit Profile Form ===== */
 
 #edit-form-container{
-  background-color: var(--color-surface);
+  background: var(--color-surface);
   padding: 1.5rem;
   border-radius: var(--radius-md);
   margin-bottom: 2rem;
@@ -562,42 +642,34 @@ width: 100%;
 #edit-form-container input, #edit-form-container textarea{
   width: 100%;
   padding: 0.6rem;
-  margin-bottom: 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   font-family: var(--font-mono);
   margin-bottom: 0.8rem;
+  color: var(--input-text);
 }
 
 #edit-form-container input:focus, #edit-form-container textarea:focus{
   outline: none;
-  border-color: var(--color-secondary);
+  border-color: var(--input-focus-border);
 }
 
 #edit-form-container button{
   padding: 0.6rem 1rem;
   border: none;
   border-radius: var(--radius-md);
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   font-family: var(--font-primary);
-  color: var(--color-background);
   cursor: pointer;
   transition: 0.3s;
   margin-top: 0.5rem;
   width: fit-content;
+  color: var(--btn-bg);
 }
 
 #edit-form-container button:hover{
-  background-color: var(--color-secondary);
-}
-
-#cancel-edit-btn{
-  background-color: var(--color-secondary);
-}
-
-#cancel-edit-btn:hover{
-  background-color: var(--color-primary);
+  background: var(--color-secondary);
 }
 
 .hidden{
@@ -611,16 +683,17 @@ width: 100%;
   margin-top: 0.7rem;
   padding: 0.6rem 1rem;
   border: none;
-  border-radius:6px;
-  background-color:#a34e4e;
+  border-radius: var(--radius-md);
   font-family: var(--font-primary);
   color: var(--color-background);
+  background: var(--delete-bg);
   cursor: pointer;
   transition: 0.3s;
 }
 
 #logout-btn:hover{
-  background-color: var(--color-primary);
+  background: var(--delete-hover-bg);
+  color: var(--color-primary);
 }
 
 .profile-btn-row{
@@ -635,7 +708,7 @@ width: 100%;
    ======================================== */
 
 .create-post-section{
-  background-color: var(--color-surface);  
+  background: var(--color-surface);  
   padding: 1.5rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -653,19 +726,19 @@ width: 100%;
   padding: 0.6rem;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
 }
 
 #post-input{
   width: 100%;
   padding: 0.7rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   resize: none; 
   font-family: var(--font-mono);
+  color: var(--input-text);
 }
 
 #post-input:focus{
@@ -678,9 +751,9 @@ width: 100%;
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid var(--color-primary);
-  background-color: rgb(240, 217, 207);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   font-family: var(--font-mono);
 }
 
@@ -690,7 +763,7 @@ width: 100%;
   border: none;
   border-radius: 5px;
   border-radius: var(--radius-md);
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   font-family: var(--font-primary);
   color: var(--color-background);
   cursor: pointer;
@@ -698,7 +771,7 @@ width: 100%;
 }
 
 #post-btn:hover{
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 
@@ -710,7 +783,7 @@ width: 100%;
   padding: 0.6rem 1rem;
   border: none;
   border-radius: var(--radius-md);
-  background-color: var(--color-primary);
+  background: var(--color-primary);
   color: var(--color-background);
   font-family: var(--font-primary);
   cursor: pointer;
@@ -720,7 +793,7 @@ width: 100%;
 }
 
 #toggle-create-post-btn:hover{
-  background-color: var(--color-secondary);
+  background: var(--color-secondary);
 }
 
 #user-posts-list{
@@ -748,13 +821,63 @@ width: 100%;
   margin: 0.3rem 0;
 }
 
+/* Comment actions (like, delete) */
+
+.comment-actions {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.comment-actions button {
+  border: none;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-primary);
+}
+
+.comment-actions button:hover {
+  background: var(--btn-hover-bg);
+  color: var(--btn-hover-text);
+}
+
+.comment-actions .delete-btn {
+  background: var(--delete-bg);
+  color: var(--color-background);
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.comment-actions .delete-btn:hover {
+  background: var(--delete-hover-bg);
+}
+
+.comment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.comment-row span{
+  flex: 1;
+}
+
+.comment-actions{
+  display: flex;
+  gap: 0.4rem;
+}
+
 
 /* ========================================
    DELETE BUTTON
    ======================================== */
 
 .delete-btn {
-  background-color: #a34e4e;
+  background: var(--delete-bg);
   color: var(--color-background);
   border: none;
   padding: 0.5rem 1rem;
@@ -766,7 +889,8 @@ width: 100%;
 }
 
 .delete-btn:hover {
-  background-color: var(--color-primary);
+  background: var(--delete-hover-bg);
+  color: var(--color-primary);
   transform: translateY(-2px);
 }
 
@@ -774,12 +898,6 @@ width: 100%;
   display: flex;
   gap: 0.5rem;
   margin-top: 1rem;
-}
-
-#delete-button {
-  margin-top: 1rem;
-  width: auto;
-  display: inline-block;
 }
 
 

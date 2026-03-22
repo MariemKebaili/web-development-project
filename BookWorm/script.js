@@ -27,6 +27,56 @@ if (!currentUser && window.location.pathname.includes("profile.html")) {
 }
 
 
+// ================================
+// Dark Mode Toggle
+// Saves preference in localStorage
+// ================================
+
+const darkModeBtn = document.getElementById("dark-mode-toggle");
+
+function updateDarkModeUI() {
+  if (document.body.classList.contains("dark-mode")) {
+    darkModeBtn.textContent = "☀️";
+  } else {
+    darkModeBtn.textContent = "🌙";
+  }
+}
+
+if (darkModeBtn) {
+  darkModeBtn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+
+    // save preference
+    if (document.body.classList.contains("dark-mode")) {
+      localStorage.setItem("darkMode", "enabled");
+    } else {
+      localStorage.setItem("darkMode", "disabled");
+    }
+
+    updateDarkModeUI();
+  });
+}
+
+const savedMode = localStorage.getItem("darkMode");
+
+if (savedMode === "enabled") {
+  document.body.classList.add("dark-mode");
+} else if (!savedMode) {
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    document.body.classList.add("dark-mode");
+  }
+}
+
+if (darkModeBtn) {
+  updateDarkModeUI();
+}
+
+// load saved mode
+if (localStorage.getItem("darkMode") === "enabled") {
+  document.body.classList.add("dark-mode");
+}
+
+
 // ========================
 // Global State for Filters
 // ========================
@@ -235,10 +285,12 @@ function loadUserPosts() {
 
   const data = getData();
   const currentUser = localStorage.getItem("currentUser");
+  const viewedUser = localStorage.getItem("viewProfile") || currentUser;
+  const isOwnProfile = viewedUser === currentUser;
 
   postList.innerHTML = "";
 
-  const userPosts = data.posts.filter((p) => p.author === currentUser);
+  const userPosts = data.posts.filter((p) => p.author === viewedUser);
 
   if (userPosts.length === 0) {
     postList.innerHTML =
@@ -251,6 +303,7 @@ function loadUserPosts() {
       post.likedBy = [];
     }
 
+    const isLiked = post.likedBy.includes(currentUser);
     const div = document.createElement("div");
     div.classList.add("post");
 
@@ -262,9 +315,14 @@ function loadUserPosts() {
             </p>
 
             <div class="post-actions">
-              <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likedBy.length}</button>
-              <button class="comment-btn" onclick="showComments(${post.id})">💬 ${post.comments.length}</button>
-              <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+              <button class="like-btn" onclick="handleLike(${post.id})"> ${isLiked ? "❤️" : "🤍"} ${post.likedBy.length}</button>
+              <button class="comment-btn" onclick="toggleCommentBox(${post.id}); showComments(${post.id})">💬 ${post.comments.length}</button>
+              ${post.author === currentUser ? `<button class="delete-btn" onclick="deletePost(${post.id})">X</button>` : ""}
+            </div>
+
+            <div id="comment-box-${post.id}" class="hidden">
+              <input type="text" class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment...">
+              <button class="comment-btn" onclick="addComment(${post.id})">Comment</button>
             </div>
 
             <div class="comments-section" id="comments-${post.id}" style="display:none;"></div>
@@ -395,7 +453,9 @@ if (logoutBtn) {
 function updateProfileUI() {
   const data = getData();
   const currentUser = localStorage.getItem("currentUser");
-  const user = data.users.find((u) => u.username === currentUser);
+  const viewedUser = localStorage.getItem("viewProfile") || currentUser
+  const user = data.users.find((u) => u.username === viewedUser);
+  const isOwnProfile = viewedUser === currentUser;
 
   if (!user) return;
 
@@ -412,11 +472,24 @@ function updateProfileUI() {
   if (displayBio) displayBio.textContent = user.bio || "No bio yet...";
   if (profilePic && user.photo) profilePic.src = user.photo;
 
-  const userPosts = data.posts.filter((p) => p.author === currentUser);
+  const userPosts = data.posts.filter((p) => p.author === viewedUser);
 
   if (postCount) postCount.textContent = userPosts.length;
   if (followerCount) followerCount.textContent = user.followers.length;
   if (followingCount) followingCount.textContent = user.following.length;
+
+  // hide actions if viewing another user's profile
+  const editBtn = document.getElementById("edit-profile-btn");
+  const createPostSection = document.getElementById("create-post-section");
+  const togglePostBtn = document.getElementById("toggle-create-post-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (!isOwnProfile) {
+    if (editBtn) editBtn.style.display = "none";
+    if (createPostSection) createPostSection.style.display = "none";
+    if (togglePostBtn) togglePostBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "none";
+  }
 }
 
 
@@ -536,8 +609,13 @@ function loadGlobalFeed() {
       post.likedBy = [];
     }
 
+    const authorUser = data.users.find(u => u.username === post.author);
+    const displayName = authorUser?.name || post.author;
+
     const isFollowing = currentUserObj.following.includes(post.author);
     const followText = isFollowing ? "Unfollow" : "Follow";
+
+    const isLiked = post.likedBy.includes(currentUser);
 
     const postDiv = document.createElement("div");
     postDiv.classList.add("post");
@@ -545,7 +623,7 @@ function loadGlobalFeed() {
     postDiv.innerHTML = `
             <div class="post-header">
                 <div class="author-info">
-                    <span class="author-name">${post.author}</span>
+                    <span class="author-name" onclick="goToProfile('${post.author}')">${displayName}</span>
                     ${post.author !== currentUser ? `<button class="follow-btn" onclick="toggleFollow('${post.author}')">${followText}</button>` : ""}
                 </div>
                 <span class="timestamp">${formatTimestamp(post.timestamp)}</span>
@@ -560,7 +638,7 @@ function loadGlobalFeed() {
             </div>
 
             <div class="post-actions">
-                <button class="like-btn" onclick="handleLike(${post.id})">❤️ ${post.likedBy.length}</button>
+                <button class="like-btn" onclick="handleLike(${post.id})">${isLiked ? "❤️" : "🤍"} ${post.likedBy.length}</button>
                 <button class="comment-btn" onclick="toggleCommentBox(${post.id})">💬 ${post.comments.length}</button>
             </div>
 
@@ -570,14 +648,87 @@ function loadGlobalFeed() {
             </div>
 
             <div id="comments-${post.id}" class="comments-section">
-                ${post.comments.map((c) => `<p><strong>${c.author}</strong>: ${c.text}</p>`).join("")}
-            </div>
-        `;
+              ${post.comments.map((c, index) => {
+                if (!Array.isArray(c.likedBy)) {
+                  c.likedBy = [];
+                }
 
-    feedPostsContainer.appendChild(postDiv);
-  });
+                const commentUser = data.users.find(u => u.username === c.author);
+                const commentName = commentUser?.name || c.author;
 
-  updateFeedTabsUI();
+                const isLiked = c.likedBy.includes(currentUser);
+                return `
+                  <div class="comment-row">
+                    <span>
+                      <p><strong>${commentName}</strong>: ${c.text}</p>
+                    </span>
+
+                    <div class="comment-actions">
+                      <button onclick="toggleCommentLike(${post.id}, ${index})">${isLiked ? "❤️" : "🤍"} ${c.likedBy.length}</button>
+                      ${c.author === currentUser ? `<button class="delete-btn" onclick="deleteComment(${post.id}, ${index})">X</button>` : ""}
+                    </div>
+                  </div>`;}).join("")}
+            </div>`;
+    feedPostsContainer.appendChild(postDiv);});
+    updateFeedTabsUI();
+}
+
+function goToProfile(username) {
+  localStorage.setItem("viewProfile", username);
+  window.location.href = "profile.html";
+}
+
+function resetProfileView(){
+  localStorage.removeItem("viewProfile");
+}
+
+
+// ============================================
+// Delete Comment
+// Only comment author can delete their comment
+// ============================================
+
+function deleteComment(postId, commentIndex) {
+  const data = getData();
+  const post = data.posts.find(p => p.id === postId);
+
+  if (!post) return;
+
+  post.comments.splice(commentIndex, 1);
+
+  saveData(data);
+  loadGlobalFeed();
+  loadUserPosts();
+  showComments(postId);
+}
+
+
+// =============================================================
+// Toggle Comment Like
+// One like per user only: first click like, second click unlike
+// =============================================================
+function toggleCommentLike(postId, commentIndex) {
+  const data = getData();
+  const currentUser = localStorage.getItem("currentUser");
+
+  const post = data.posts.find(p => p.id === postId);
+  if (!post) return;
+
+  const comment = post.comments[commentIndex];
+  if (!comment) return;
+
+  if (!Array.isArray(comment.likedBy)) {
+    comment.likedBy = [];
+  }
+
+  if (comment.likedBy.includes(currentUser)) {
+    comment.likedBy = comment.likedBy.filter(u => u !== currentUser);
+  } else {
+    comment.likedBy.push(currentUser);
+  }
+
+  saveData(data);
+  loadGlobalFeed();
 }
 
 
@@ -803,11 +954,13 @@ function addComment(postId) {
   post.comments.push({
     author: localStorage.getItem("currentUser"),
     text: text,
+    likedBy: [],
   });
 
   saveData(data);
   input.value = "";
   loadGlobalFeed();
+  loadUserPosts();
 }
 
 // =======================================
@@ -824,18 +977,27 @@ function showComments(postId) {
   if (!commentsDiv) return;
 
   // toggle show/hide
-  if (commentsDiv.style.display === "none") {
-    commentsDiv.style.display = "block";
-  } else {
-    commentsDiv.style.display = "none";
-  }
+  commentsDiv.style.display = commentsDiv.style.display === "none" ? "block" : "none";
 
   commentsDiv.innerHTML = "";
 
-  post.comments.forEach((comment) => {
-    const p = document.createElement("p");
-    p.innerHTML = `<strong>${comment.author}</strong>: ${comment.text}`;
-    commentsDiv.appendChild(p);
+  post.comments.forEach((comment, index) => {
+    const commentUser = data.users.find(u => u.username === comment.author);
+    const commentName = commentUser?.name || comment.author;
+
+    const currentUser = localStorage.getItem("currentUser");
+
+    const div = document.createElement("div");
+    div.classList.add("comment-row");
+
+    div.innerHTML = `
+      <span>
+        <strong>${commentName}</strong>: ${comment.text}
+      </span>
+      
+      <div class="comment-actions">
+        ${comment.author === currentUser ? `<button class="delete-btn" onclick="deleteComment(${postId}, ${index})">X</button>` : ""}`;
+    commentsDiv.appendChild(div);
   });
 }
 
