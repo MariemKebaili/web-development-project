@@ -3,24 +3,22 @@
    Desktop First Responsive Design
    ======================================== */
 
-
 /* ===================================
    VARIABLES (theme & design system)
    =================================== */
 
 :root {
-
   /* Colors */
   --color-background: #e1ccba;
   --color-surface: #b99e9e;
   --color-primary: #3d3247;
   --color-secondary: #867575;
   --color-header-footer: #dbc5b0;
-  
+
   /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
-  --shadow-lg: 0 8px 16px rgba(0,0,0,0.2);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
 
   /* Radius */
   --radius-md: 10px;
@@ -68,12 +66,11 @@
   --input-border: #b8a8d9;
 }
 
-
 /* ============
    BASE / RESET
    ============ */
 
-*{
+* {
   box-sizing: border-box;
 }
 
@@ -85,24 +82,36 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  transition: background 0.4s ease, color 0.4s ease;
+  transition:
+    background 0.4s ease,
+    color 0.4s ease;
 }
 
 main {
   flex: 1;
 }
 
-.post, .filter-sidebar, .feed-tabs, .signup-container, .profile-header-top, #edit-form-container, .create-post-section {
-  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+.post,
+.filter-sidebar,
+.feed-tabs,
+.signup-container,
+.profile-header-top,
+#edit-form-container,
+.create-post-section {
+  transition:
+    background 0.4s ease,
+    color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
 }
-
 
 /* ===============
    GLOBAL ELEMENTS
    =============== */
 
 /* ===== Input & Textarea =====*/
-input, textarea {
+input,
+textarea {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-md);
   background: var(--input-bg);
@@ -110,7 +119,8 @@ input, textarea {
   font-family: var(--font-mono);
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: var(--input-text);
   opacity: 0.7;
 }
@@ -119,7 +129,6 @@ input::placeholder, textarea::placeholder {
   display: none;
 }
 
-
 /* ===================================
    LAYOUT 
    =================================== */
@@ -127,7 +136,12 @@ input::placeholder, textarea::placeholder {
 /* ===== HEADER ===== */
 header {
   padding: 1rem 2rem;
-  background: linear-gradient(to right, var(--color-header-footer) 0%, var(--color-surface) 0%, var(--color-header-footer) 100%);
+  background: linear-gradient(
+    to right,
+    var(--color-header-footer) 0%,
+    var(--color-surface) 0%,
+    var(--color-header-footer) 100%
+  );
 }
 
 .nav-container {
@@ -207,7 +221,6 @@ header {
 #dark-mode-toggle:hover {
   background: var(--color-secondary);
 }
-
 
 /* ===================================
    FEED PAGE
@@ -316,7 +329,7 @@ header {
   text-decoration: none;
   background: var(--color-background);
   color: var(--color-primary);
-  padding :0.6rem 1rem;
+  padding: 0.6rem 1rem;
   border: none;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
@@ -418,7 +431,8 @@ header {
   margin-bottom: 0.6rem;
 }
 
-.like-btn, .comment-btn {
+.like-btn,
+.comment-btn {
   border: none;
   padding: 0.5rem 0.8rem;
   border-radius: var(--radius-md);
@@ -429,7 +443,8 @@ header {
   transition: 0.3s;
 }
 
-.like-btn:hover, .comment-btn:hover {
+.like-btn:hover,
+.comment-btn:hover {
   background: var(--btn-hover-bg);
   color: var(--btn-hover-text);
 }
@@ -462,7 +477,6 @@ header {
   color: var(--color-secondary);
 }
 
-
 /* ========================================
    LOGIN & SIGNUP
    ======================================== */
@@ -472,7 +486,12 @@ header {
   max-width: 700px;
   margin: auto;
   margin-top: 3rem;
-  background: linear-gradient(to left, var(--color-surface) 0%, var(--color-surface) 20%, var(--color-header-footer) 100%);
+  background: linear-gradient(
+    to left,
+    var(--color-surface) 0%,
+    var(--color-surface) 20%,
+    var(--color-header-footer) 100%
+  );
   padding: 2rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -516,20 +535,22 @@ header {
   background: var(--color-secondary);
 }
 
-.login-link, .signup-link {
+.login-link,
+.signup-link {
   margin-top: 1rem;
   text-align: center;
 }
 
-.login-link a, .signup-link a {
+.login-link a,
+.signup-link a {
   color: var(--color-secondary);
   text-decoration: none;
 }
 
-.login-link a:hover, .signup-link a:hover {
+.login-link a:hover,
+.signup-link a:hover {
   text-decoration: underline;
 }
-
 
 /* ===================================
    PROFILE PAGE
@@ -548,7 +569,12 @@ header {
 .profile-header-top {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to bottom, var(--color-header-footer) 0%, var(--color-surface) 100%, var(--color-header-footer) 60%);
+  background: linear-gradient(
+    to bottom,
+    var(--color-header-footer) 0%,
+    var(--color-surface) 100%,
+    var(--color-header-footer) 60%
+  );
   padding: 2rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -594,8 +620,8 @@ header {
   margin-top: 1rem;
 }
 
-.profile-header-top > *{
-width: 100%;
+.profile-header-top > * {
+  width: 100%;
 }
 
 .stat-item {
@@ -626,13 +652,15 @@ width: 100%;
   margin-bottom: 2rem;
 }
 
-#edit-form-container input, #edit-form-container textarea {
+#edit-form-container input,
+#edit-form-container textarea {
   width: 100%;
   padding: 0.6rem;
   margin-bottom: 0.8rem;
 }
 
-#edit-form-container input:focus, #edit-form-container textarea:focus {
+#edit-form-container input:focus,
+#edit-form-container textarea:focus {
   outline: none;
 }
 
@@ -681,7 +709,7 @@ width: 100%;
 
 /* ===== Create Post Section ===== */
 .create-post-section {
-  background: var(--color-surface);  
+  background: var(--color-surface);
   padding: 1.5rem;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -706,7 +734,7 @@ width: 100%;
 #post-input {
   width: 100%;
   padding: 0.7rem;
-  resize: none; 
+  resize: none;
 }
 
 #post-input:focus {
@@ -714,11 +742,11 @@ width: 100%;
   border-color: var(--color-secondary);
 }
 
-#author-input, #book-input {
+#author-input,
+#book-input {
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.5rem;
-
 }
 
 #post-btn {
@@ -837,26 +865,28 @@ width: 100%;
   margin-top: 1rem;
 }
 
-
 /* ===================================
    FOOTER
    =================================== */
 
 footer {
-  background: linear-gradient(to left, var(--color-header-footer) 0%, var(--color-surface) 40%, var(--color-header-footer) 100%);
+  background: linear-gradient(
+    to left,
+    var(--color-header-footer) 0%,
+    var(--color-surface) 40%,
+    var(--color-header-footer) 100%
+  );
   text-align: center;
   padding: 1.5rem;
   margin-top: 2rem;
 }
 
-
 /* ===================================
    RESPONSIVE
    =================================== */
-   
-/* ===== Mobile ======= */
-@media (max-width:768px) {
 
+/* ===== Mobile ======= */
+@media (max-width: 768px) {
   header {
     padding: 1rem;
   }
@@ -909,8 +939,7 @@ footer {
 }
 
 /* ===== Desktop ===== */
-@media (min-width:1200px) {
-
+@media (min-width: 1200px) {
   .feed {
     max-width: 1100px;
   }
@@ -961,4 +990,72 @@ footer {
     flex-direction: column;
     gap: 1rem;
   }
+}
+
+/* ===================================== */
+/* ===== custom toast/ message ====== */
+/* ===================================== */
+.custom-toast {
+  position: fixed;
+
+  /* CENTER */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+
+  /* SIZE (square shape) */
+  width: 300px;
+  min-height: 150px;
+
+  /* LAYOUT */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+
+  /* STYLE */
+  border-radius: 12px; /* square-ish, not pill */
+  background: var(--color-surface);
+  color: var(--color-primary);
+  border: 3px solid var(--color-primary);
+  box-shadow: var(--shadow-lg);
+
+  font-family: var(--font-primary);
+  font-size: 1.2rem;
+
+  opacity: 0;
+  z-index: 9999;
+
+  transition: all 0.25s ease;
+}
+
+.custom-toast.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.custom-toast.success {
+  border-left: 8px solid #4f8a5b;
+}
+
+.custom-toast.error {
+  border-left: 8px solid #a34e4e;
+}
+
+.custom-toast.info {
+  border-left: 8px solid #6b5fa3;
+}
+
+.custom-toast::backdrop {
+  backdrop-filter: blur(4px);
+}
+
+.input-note {
+  display: block;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
 }

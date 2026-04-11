@@ -89,6 +89,36 @@ function saveData(data) {
 }
 
 
+
+
+// ===========================================================
+// custom toast message
+// ===========================================================
+
+
+function showToast(message, type = "info") {
+  const oldToast = document.querySelector(".custom-toast");
+  if (oldToast) {
+    oldToast.remove();
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `custom-toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+
+
 // ============================================================
 // Data Migration (Update old data to work with the new system)
 // ============================================================
@@ -139,9 +169,20 @@ if (signupForm) {
 
     const data = getData();
 
+    const hasLetter = /[A-Za-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+
+    if (password.length < 8 || !hasLetter || !hasNumber) {
+      showToast(
+        "Use a strong password: at least 8 characters with letters and numbers.",
+        "error",
+      );
+    return;
+    }
+
     const existingUser = data.users.find((u) => u.username === username);
     if (existingUser) {
-      alert("Username already exists");
+      showToast("Username already exists.", "error");
       return;
     }
 
@@ -159,8 +200,10 @@ if (signupForm) {
     data.users.push(newUser);
     saveData(data);
 
-    alert("Account created!🎉");
-    window.location.href = "login.html";
+    showToast("Account created successfully.", "success");
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1200);
   });
 }
 
@@ -187,7 +230,7 @@ if (loginForm) {
       localStorage.setItem("currentUser", user.username);
       window.location.href = "profile.html";
     } else {
-      alert("Invalid username or password");
+      showToast("Invalid username or password.", "error");
     }
   });
 }
@@ -851,7 +894,7 @@ function toggleCommentLike(postId, commentIndex) {
 
   saveData(data);
   loadGlobalFeed();
-  loadUserPosts;
+  loadUserPosts();
 }
 
 // Post Timestamp Formatting (convert timestamp into readable time)
@@ -1014,6 +1057,16 @@ function updateLoginButton() {
   }
 }
 
+// Show or hide sign link depending on login state
+function updateAuthNav() {
+  const signupGroup = document.getElementById("signup-group");
+  const currentUser = localStorage.getItem("currentUser");
+
+  if (signupGroup) {
+    signupGroup.style.display = currentUser ? "none" : "flex";
+  }
+}
+
 
 // ===================
 // Page Initialization
@@ -1043,4 +1096,36 @@ if (closeDetailBtn) {
   });
 }
 
+// ==========================//
+function showToast(message, type = "info") {
+  const oldToast = document.querySelector(".custom-toast");
+  if (oldToast) {
+    oldToast.remove();
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `custom-toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+function updateAuthNav() {
+  const signupNavItem = document.getElementById("signup-nav-item");
+  const currentUser = localStorage.getItem("currentUser");
+
+  if (signupNavItem) {
+    signupNavItem.style.display = currentUser ? "none" : "flex";
+  }
+}
+
 updateLoginButton();
+updateAuthNav();
