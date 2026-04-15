@@ -1015,7 +1015,7 @@ footer {
   padding: 1.5rem;
 
   /* STYLE */
-  border-radius: 12px; /* square-ish, not pill */
+  border-radius: 12px;
   background: var(--color-surface);
   color: var(--color-primary);
   border: 3px solid var(--color-primary);
