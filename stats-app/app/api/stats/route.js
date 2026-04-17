@@ -1,30 +1,20 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import {
+  getTotalPosts,
+  getTotalUsers,
+  getMostActiveUsers,
+  getPostsPerUser,
+  getLatestPost} from "@/lib/repository";
 
 export async function GET() {
-  const totalPosts = await prisma.post.count();
-  const totalUsers = await prisma.user.count();
+  const totalPosts = await getTotalPosts();
+  const totalUsers = await getTotalUsers();
 
   const avgPosts = totalUsers === 0 ? 0 : totalPosts / totalUsers;
 
+  const mostActive = await getMostActiveUsers();
+  const postsPerUser = await getPostsPerUser();
 
-  const mostActive = await prisma.post.groupBy({
-  by: ['authorId'],
-  _count: { authorId: true },
-  orderBy: { _count: { authorId: 'desc' } },
-  take: 5
-});
-
-
-  const postsPerUser = await prisma.post.groupBy({
-    by: ['authorId'],
-    _count: true
-  });
-
-  const latestPost = await prisma.post.findFirst({
-    orderBy: { createdAt: 'desc' }
-  });
+  const latestPost = await getLatestPost();
 
   return Response.json({
     totalPosts,
@@ -35,4 +25,3 @@ export async function GET() {
     latestPost
   });
 }
-

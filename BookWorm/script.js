@@ -89,12 +89,9 @@ function saveData(data) {
 }
 
 
-
-
 // ===========================================================
 // custom toast message
 // ===========================================================
-
 
 function showToast(message, type = "info") {
   const oldToast = document.querySelector(".custom-toast");
@@ -116,7 +113,6 @@ function showToast(message, type = "info") {
     setTimeout(() => toast.remove(), 300);
   }, 2500);
 }
-
 
 
 // ============================================================

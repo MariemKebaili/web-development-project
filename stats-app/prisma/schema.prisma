@@ -8,19 +8,25 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  username String @unique
-  email String
-  password String
-
-  posts Post[]
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String
+  password  String
+  name      String   @default("")
+  bio       String   @default("")
+  photo     String   @default("")
+  followers String   @default("[]")
+  following String   @default("[]")
 }
 
 model Post {
-  id Int @id @default(autoincrement())
-  text String
-  authorId Int
-  author User @relation(fields: [authorId], references: [id])
-
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  text        String
+  author      String
+  authorInput String   @default("")
+  bookInput   String   @default("")
+  likedBy     String   @default("[]")
+  comments    String   @default("[]")
+  timestamp   BigInt   @default(0)
+  createdAt   DateTime @default(now())
 }

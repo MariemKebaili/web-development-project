@@ -1,0 +1,585 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { useSearchParams } from "next/navigation";
+
+
+// ============================
+// Timestamp Helper
+// ============================
+
+function formatTimestamp(timestamp) {
+  const now = Date.now();
+  const diff = now - timestamp;
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(diff / (1000 * 60));
+  const hours   = Math.floor(diff / (1000 * 60 * 60));
+  const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+  if (seconds < 60) return "Just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (hours   < 24) return `${hours} hr ago`;
+  if (days    <  7) return `${days} day ago`;
+
+  return new Date(timestamp).toLocaleDateString();
+}
+
+// ============================
+// Shuffle Helper (Explore tab)
+// ============================
+
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+
+export default function FeedPage() {
+  const [posts,       setPosts]       = useState([]);
+  const [allPosts,    setAllPosts]    = useState([]);
+  const [users,       setUsers]       = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [activeTab,   setActiveTab]   = useState("following");
+  const [darkMode,    setDarkMode]    = useState(false);
+  const [toast,       setToast]       = useState(null);
+
+  // Filter state
+  const [filterAuthor, setFilterAuthor] = useState("");
+  const [filterBook,   setFilterBook]   = useState("");
+  const [authorSuggestions, setAuthorSuggestions] = useState([]);
+  const [bookSuggestions,   setBookSuggestions]   = useState([]);
+
+  // Open comment boxes per post id
+  const [openCommentBoxes, setOpenCommentBoxes] = useState({});
+  // Comment input values per post id
+  const [commentInputs, setCommentInputs] = useState({});
+
+  // Timestamp refresh (re-render every 60s)
+  const [tick, setTick] = useState(0);
+
+  const params   = useSearchParams();
+  const username = params.get("user");
+
+  const filterSidebarRef = useRef(null);
+
+
+  // ============================
+  // Toast Notification
+  // ============================
+
+  function showToast(message, type = "info") {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 2500);
+  }
+
+
+  // ============================
+  // Dark Mode
+  // ============================
+
+  useEffect(() => {
+    const prefersDark =
+      window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const saved = localStorage.getItem("darkMode");
+
+    if (saved === "enabled" || (!saved && prefersDark)) {
+      setDarkMode(true);
+      document.body.classList.add("dark-mode");
+    }
+  }, []);
+
+  function toggleDarkMode() {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.body.classList.toggle("dark-mode", next);
+    localStorage.setItem("darkMode", next ? "enabled" : "disabled");
+  }
+
+
+  // ============================
+  // Initial Data Load
+  // ============================
+
+  async function loadUsers() {
+    const res   = await fetch("/api/users");
+    const data  = await res.json();
+    setUsers(data);
+    const user  = data.find(u => u.username === username);
+    setCurrentUser(user || null);
+    return { allUsers: data, loggedInUser: user || null };
+  }
+
+  async function loadPosts() {
+    const res  = await fetch("/api/posts");
+    const data = await res.json();
+    setAllPosts(data);
+    return data;
+  }
+
+  useEffect(() => {
+    loadUsers();
+    loadPosts();
+  }, []);
+
+  // Refresh timestamps every 60 seconds
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 60000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Close suggestion dropdowns when clicking outside the sidebar
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (filterSidebarRef.current && !filterSidebarRef.current.contains(e.target)) {
+        setAuthorSuggestions([]);
+        setBookSuggestions([]);
+      }
+    }
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+
+  // ============================
+  // Filter + Tab Logic
+  // ============================
+
+  // Unique values for autocomplete suggestions
+  function getUniqueValues(key) {
+    return [...new Set(
+      allPosts.map(p => p[key]).filter(v => v && v.trim() !== "")
+    )];
+  }
+
+  function handleAuthorFilterChange(value) {
+    setFilterAuthor(value);
+    if (value === "") {
+      setAuthorSuggestions([]);
+      return;
+    }
+    const matches = getUniqueValues("authorInput")
+      .filter(a => a.toLowerCase().includes(value.toLowerCase()));
+    setAuthorSuggestions(matches);
+  }
+
+  function handleBookFilterChange(value) {
+    setFilterBook(value);
+    if (value === "") {
+      setBookSuggestions([]);
+      return;
+    }
+    const matches = getUniqueValues("bookInput")
+      .filter(b => b.toLowerCase().includes(value.toLowerCase()));
+    setBookSuggestions(matches);
+  }
+
+  function clearFilters() {
+    setFilterAuthor("");
+    setFilterBook("");
+    setAuthorSuggestions([]);
+    setBookSuggestions([]);
+  }
+
+  // Compute posts to display based on tab + filters
+  const filteredPosts = (() => {
+    if (!currentUser) return [];
+
+    const following = currentUser.following || [];
+
+    let base = [];
+    if (activeTab === "following") {
+      base = allPosts
+        .filter(p => following.includes(p.author))
+        .sort((a, b) => b.timestamp - a.timestamp);
+    } else {
+      base = shuffleArray(
+        allPosts.filter(p => p.author !== currentUser.username && !following.includes(p.author))
+      );
+    }
+
+    // Apply search filters
+    if (filterAuthor) {
+      base = base.filter(p =>
+        p.authorInput && p.authorInput.toLowerCase().includes(filterAuthor.toLowerCase())
+      );
+    }
+    if (filterBook) {
+      base = base.filter(p =>
+        p.bookInput && p.bookInput.toLowerCase().includes(filterBook.toLowerCase())
+      );
+    }
+
+    return base;
+  })();
+
+
+  // ============================
+  // Like / Unlike a Post
+  // ============================
+
+  async function handleLike(postId) {
+    if (!currentUser) return;
+
+    const post      = allPosts.find(p => p.id === postId);
+    const likedBy   = post?.likedBy || [];
+    const alreadyLiked = likedBy.includes(currentUser.username);
+
+    const updatedLikedBy = alreadyLiked
+      ? likedBy.filter(u => u !== currentUser.username)
+      : [...likedBy, currentUser.username];
+
+    // Optimistic update
+    setAllPosts(prev =>
+      prev.map(p => p.id === postId ? { ...p, likedBy: updatedLikedBy } : p)
+    );
+
+    await fetch(`/api/posts/${postId}/like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: currentUser.username }),
+    });
+  }
+
+
+  // ============================
+  // Comment System
+  // ============================
+
+  function toggleCommentBox(postId) {
+    setOpenCommentBoxes(prev => ({ ...prev, [postId]: !prev[postId] }));
+  }
+
+  async function addComment(postId) {
+    const text = (commentInputs[postId] || "").trim();
+    if (!text || !currentUser) return;
+
+    const newComment = { author: currentUser.username, text, likedBy: [] };
+
+    // Optimistic update
+    setAllPosts(prev =>
+      prev.map(p =>
+        p.id === postId
+          ? { ...p, comments: [...(p.comments || []), newComment] }
+          : p
+      )
+    );
+    setCommentInputs(prev => ({ ...prev, [postId]: "" }));
+
+    await fetch(`/api/posts/${postId}/comment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ author: currentUser.username, text }),
+    });
+  }
+
+  async function deleteComment(postId, commentIndex) {
+    // Optimistic update
+    setAllPosts(prev =>
+      prev.map(p => {
+        if (p.id !== postId) return p;
+        const updated = [...p.comments];
+        updated.splice(commentIndex, 1);
+        return { ...p, comments: updated };
+      })
+    );
+
+    await fetch(`/api/posts/${postId}/comment/${commentIndex}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: currentUser.username }),
+    });
+  }
+
+  async function toggleCommentLike(postId, commentIndex) {
+    if (!currentUser) return;
+
+    setAllPosts(prev =>
+      prev.map(p => {
+        if (p.id !== postId) return p;
+        const updatedComments = p.comments.map((c, i) => {
+          if (i !== commentIndex) return c;
+          const likedBy     = c.likedBy || [];
+          const alreadyLiked = likedBy.includes(currentUser.username);
+          return {
+            ...c,
+            likedBy: alreadyLiked
+              ? likedBy.filter(u => u !== currentUser.username)
+              : [...likedBy, currentUser.username],
+          };
+        });
+        return { ...p, comments: updatedComments };
+      })
+    );
+
+    await fetch(`/api/posts/${postId}/comment/${commentIndex}/like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: currentUser.username }),
+    });
+  }
+
+
+  // ============================
+  // Delete Post
+  // ============================
+
+  async function deletePost(postId) {
+    setAllPosts(prev => prev.filter(p => p.id !== postId));
+
+    await fetch(`/api/posts/${postId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: currentUser.username }),
+    });
+  }
+
+
+  // ============================
+  // Follow / Unfollow
+  // ============================
+
+  async function toggleFollow(authorUsername) {
+    if (!currentUser || authorUsername === currentUser.username) return;
+
+    const isFollowing = (currentUser.following || []).includes(authorUsername);
+
+    const updatedFollowing = isFollowing
+      ? currentUser.following.filter(u => u !== authorUsername)
+      : [...(currentUser.following || []), authorUsername];
+
+    setCurrentUser(prev => ({ ...prev, following: updatedFollowing }));
+
+    setUsers(prev =>
+      prev.map(u => {
+        if (u.username === currentUser.username) return { ...u, following: updatedFollowing };
+        if (u.username === authorUsername) {
+          const followers = u.followers || [];
+          return {
+            ...u,
+            followers: isFollowing
+              ? followers.filter(f => f !== currentUser.username)
+              : [...followers, currentUser.username],
+          };
+        }
+        return u;
+      })
+    );
+
+    await fetch(`/api/users/${currentUser.username}/follow`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: authorUsername }),
+    });
+  }
+
+
+  // ============================
+  // Go to Profile
+  // ============================
+
+  function goToProfile(authorUsername) {
+    window.location.href = `/profile?user=${username}&view=${authorUsername}`;
+  }
+
+
+  // ============================
+  // Render
+  // ============================
+
+  return (
+    <>
+      {/* Toast */}
+      {toast && (
+        <div className={`custom-toast ${toast.type} show`}>
+          {toast.message}
+        </div>
+      )}
+
+      <header>
+        <div className="nav-container">
+          <div className="logo-section">
+            <img src="/logo.png" className="logo" alt="Logo" />
+            <h1 className="site-name">Bookworms</h1>
+          </div>
+
+          <nav className="nav">
+            <ul className="nav-links">
+              <li className="divider">|</li>
+              <li><a href={`/feed?user=${username}`}>Feed</a></li>
+              <li className="divider">|</li>
+              <li><a href="/login">Switch Account</a></li>
+              <li className="divider">|</li>
+              <li><a href={`/profile?user=${username}`} id="login-btn">{currentUser ? currentUser.username : "Log In"}</a></li>
+              <li className="divider">|</li>
+              <li>
+                <button id="dark-mode-toggle" onClick={toggleDarkMode}>{darkMode ? "☀️" : "🌙"}</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+
+      <main className="feed-layout">
+
+        <aside className="filter-sidebar" ref={filterSidebarRef}>
+          <h3>Filter Posts🔍</h3>
+
+          <input
+            type="text"
+            id="filter-author"
+            placeholder="Search by author.."
+            value={filterAuthor}
+            onChange={e => handleAuthorFilterChange(e.target.value)}/>
+          <div id="author-suggestions" className="suggestions-box">
+            {authorSuggestions.map((a, i) => (
+              <div key={i} onClick={() => {
+                setFilterAuthor(a);
+                setAuthorSuggestions([]);
+              }}>{a}</div>
+            ))}
+          </div>
+
+          <input
+            type="text"
+            id="filter-book"
+            placeholder="Search by book.."
+            value={filterBook}
+            onChange={e => handleBookFilterChange(e.target.value)}/>
+          <div id="book-suggestions" className="suggestions-box">
+            {bookSuggestions.map((b, i) => (
+              <div key={i} onClick={() => {
+                setFilterBook(b);
+                setBookSuggestions([]);
+              }}>{b}</div>
+            ))}
+          </div>
+
+          <button id="clear-filters-btn" onClick={clearFilters}>Clear</button>
+        </aside>
+
+        <section className="feed">
+
+          <div className="feed-tabs">
+            <button type="button" id="following-tab" className={`feed-tab ${activeTab === "following" ? "active" : ""}`}
+              onClick={() => setActiveTab("following")} >Following👥</button>
+            <button type="button" id="explore-tab" className={`feed-tab ${activeTab === "explore" ? "active" : ""}`}
+              onClick={() => setActiveTab("explore")}>Explore🔥</button>
+          </div>
+
+          <div id="feed-posts">
+
+            {!currentUser && (
+              <p className="empty-msg">Please log in to view your feed.</p>
+            )}
+
+            {currentUser && filteredPosts.length === 0 && (
+              <p className="empty-msg">
+                {activeTab === "following"
+                  ? "No posts from people you follow yet."
+                  : "No explore posts available yet."}
+              </p>
+            )}
+
+            {currentUser && filteredPosts.map(post => {
+              const authorUser   = users.find(u => u.username === post.author);
+              const displayName  = authorUser?.name || post.author;
+              const likedBy      = post.likedBy || [];
+              const isLiked      = likedBy.includes(currentUser.username);
+              const isFollowing  = (currentUser.following || []).includes(post.author);
+              const isOwnPost    = post.author === currentUser.username;
+              const comments     = post.comments || [];
+
+              return (
+                <div key={post.id} className="post">
+
+                  <div className="post-header">
+                    <div className="author-info">
+                      <span className="author-name"
+                        onClick={() => goToProfile(post.author)}
+                        style={{ cursor: "pointer" }}>{displayName}</span>
+                      {!isOwnPost && (
+                        <button className="follow-btn" onClick={() => toggleFollow(post.author)}>
+                          {isFollowing ? "Unfollow" : "Follow"}
+                        </button>
+                      )}
+                    </div>
+                    <span className="timestamp">{formatTimestamp(post.timestamp)}</span>
+                  </div>
+
+                  <div className="post-content">
+                    <p>{post.text}
+                      <strong>
+                        {" "}- {post.authorInput || "Unknown Author"}
+                        {post.bookInput ? ` | ${post.bookInput}` : ""}
+                      </strong>
+                    </p>
+                  </div>
+
+                  <div className="post-actions">
+                    <button className="like-btn" onClick={() => handleLike(post.id)}>
+                      {isLiked ? "❤️" : "🤍"} {likedBy.length}
+                    </button>
+                    <button className="comment-btn" onClick={() => toggleCommentBox(post.id)}>
+                      💬 {comments.length}
+                    </button>
+                    {isOwnPost && (
+                      <button className="delete-btn" onClick={() => deletePost(post.id)}>X</button>
+                    )}
+                  </div>
+
+                  {openCommentBoxes[post.id] && (
+                    <div id={`comment-box-${post.id}`}>
+                      <input type="text" className="comment-input" id={`comment-input-${post.id}`}
+                        placeholder="Write a comment..." value={commentInputs[post.id] || ""}
+                        onChange={e =>
+                          setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))
+                        }
+                        onKeyDown={e => { if (e.key === "Enter") addComment(post.id); }}/>
+                      <button className="comment-btn" onClick={() => addComment(post.id)}>Comment</button>
+                    </div>
+                  )}
+
+                  <div id={`comments-${post.id}`} className="comments-section">
+                    {comments.map((c, index) => {
+                      const commentLikedBy = c.likedBy || [];
+                      const commentIsLiked = commentLikedBy.includes(currentUser.username);
+                      const commentUser = users.find(u => u.username === c.author);
+                      const commentName = commentUser?.name || c.author;
+                      const isOwnComment = c.author === currentUser.username;
+
+                      return (
+                        <div key={index} className="comment-row">
+                          <span>
+                            <p><strong>{commentName}</strong>: {c.text}</p>
+                          </span>
+                          <div className="comment-actions">
+                            <button className="like-btn" onClick={() => toggleCommentLike(post.id, index)}>
+                              {commentIsLiked ? "❤️" : "🤍"} {commentLikedBy.length}
+                            </button>
+                            {isOwnComment && (
+                              <button className="delete-btn" onClick={() => deleteComment(post.id, index)}>X</button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>&copy; 2026 Bookworms. All rights reserved.</p>
+      </footer>
+    </>
+  );
+}
