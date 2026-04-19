@@ -22,9 +22,10 @@ if (!localStorage.getItem("bookwormData")) {
 
 const currentUser = localStorage.getItem("currentUser");
 
-if (!currentUser && window.location.pathname.includes("profile.html")) {
+if (!currentUser && (window.location.pathname.includes("profile.html") || window.location.pathname.includes("feed.html"))) {
   window.location.href = "login.html";
 }
+
 
 
 // ===================================================
