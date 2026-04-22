@@ -55,19 +55,16 @@ export default function SignupPage() {
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim();
 
-    // ── Password strength check ──//
     const hasLetter = /[A-Za-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
 
     if (password.length < 8 || !hasLetter || !hasNumber) {
       showToast(
-        "Use a strong password: at least 8 characters with letters and numbers.",
-        "error"
+        "Use a strong password: at least 8 characters with letters and numbers.", "error"
       );
       return;
     }
 
-    //── Username uniqueness check ──//
     const res = await fetch("/api/users");
     const users = await res.json();
 
@@ -77,7 +74,6 @@ export default function SignupPage() {
       return;
     }
 
-    //── Create user via API ──//
     const newUser = {
       username: trimmedUsername,
       email: trimmedEmail,
@@ -90,7 +86,7 @@ export default function SignupPage() {
     };
 
     const createRes = await fetch("/api/users", {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newUser),
     });
@@ -121,7 +117,7 @@ export default function SignupPage() {
       <header>
         <div className="nav-container">
           <div className="logo-section">
-            <img src="/logo.png" className="logo" alt="Logo" />
+            <img src="/logo.png" className="logo" alt="Logo"/>
             <h1 className="site-name">Bookworms</h1>
           </div>
         </div>

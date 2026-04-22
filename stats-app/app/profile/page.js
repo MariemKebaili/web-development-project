@@ -137,7 +137,7 @@ export default function ProfilePage() {
     if (!newPost.trim()) return;
 
     const res = await fetch("/api/posts", {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         text: newPost.trim(),
@@ -189,9 +189,7 @@ export default function ProfilePage() {
     const likedBy = post?.likedBy || [];
     const alreadyLiked = likedBy.includes(loggedInUsername);
 
-    const updatedLikedBy = alreadyLiked
-      ? likedBy.filter(u => u !== loggedInUsername)
-      : [...likedBy, loggedInUsername];
+    const updatedLikedBy = alreadyLiked ? likedBy.filter(u => u !== loggedInUsername) : [...likedBy, loggedInUsername];
 
     setAllPosts(prev =>
       prev.map(p => p.id === postId ? { ...p, likedBy: updatedLikedBy } : p)
@@ -221,9 +219,7 @@ export default function ProfilePage() {
 
     setAllPosts(prev =>
       prev.map(p =>
-        p.id === postId
-          ? { ...p, comments: [...(p.comments || []), newComment] }
-          : p
+        p.id === postId ? { ...p, comments: [...(p.comments || []), newComment] } : p
       )
     );
     setCommentInputs(prev => ({ ...prev, [postId]: "" }));
@@ -236,8 +232,7 @@ export default function ProfilePage() {
   }
 
   async function deleteComment(postId, commentIndex) {
-    setAllPosts(prev =>
-      prev.map(p => {
+    setAllPosts(prev => prev.map(p => {
         if (p.id !== postId) return p;
         const updated = [...p.comments];
         updated.splice(commentIndex, 1);
@@ -255,18 +250,14 @@ export default function ProfilePage() {
   async function toggleCommentLike(postId, commentIndex) {
     if (!loggedInUser) return;
 
-    setAllPosts(prev =>
-      prev.map(p => {
+    setAllPosts(prev => prev.map(p => {
         if (p.id !== postId) return p;
         const updatedComments = p.comments.map((c, i) => {
           if (i !== commentIndex) return c;
-          const likedBy      = c.likedBy || [];
+          const likedBy = c.likedBy || [];
           const alreadyLiked = likedBy.includes(loggedInUsername);
           return {
-            ...c,
-            likedBy: alreadyLiked
-              ? likedBy.filter(u => u !== loggedInUsername)
-              : [...likedBy, loggedInUsername],
+            ...c, likedBy: alreadyLiked ? likedBy.filter(u => u !== loggedInUsername) : [...likedBy, loggedInUsername],
           };
         });
         return { ...p, comments: updatedComments };
@@ -301,11 +292,11 @@ export default function ProfilePage() {
       method:  "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        currentUsername: loggedInUsername,  // ← so the server knows who to update
-        name:     editName.trim(),
+        currentUsername: loggedInUsername,
+        name: editName.trim(),
         username: editUsername.trim(),
-        bio:      editBio.trim(),
-        photo:    editPhoto.trim(),
+        bio: editBio.trim(),
+        photo: editPhoto.trim(),
   }),
 });
 
@@ -346,7 +337,7 @@ export default function ProfilePage() {
       <header>
         <div className="nav-container">
           <div className="logo-section">
-            <img src="/logo.png" className="logo" alt="Logo" />
+            <img src="/logo.png" className="logo" alt="Logo"/>
             <h1 className="site-name">Bookworms</h1>
           </div>
 
@@ -389,13 +380,9 @@ export default function ProfilePage() {
             <span className="stat-item">
               <strong id="post-count">{userPosts.length}</strong> posts </span>
             <span className="stat-item">
-              <strong id="follower-count">
-                {viewedUser?.followers?.length ?? 0}
-              </strong> followers </span>
+              <strong id="follower-count">{viewedUser?.followers?.length ?? 0}</strong> followers </span>
             <span className="stat-item">
-              <strong id="following-count">
-                {viewedUser?.following?.length ?? 0}
-              </strong> following </span>
+              <strong id="following-count">{viewedUser?.following?.length ?? 0}</strong> following </span>
           </div>
 
           {isOwnProfile && (
@@ -487,8 +474,7 @@ export default function ProfilePage() {
                           <input type="text" className="comment-input" id={`comment-input-${post.id}`}
                             placeholder="Write a comment..." value={commentInputs[post.id] || ""} onChange={e =>
                               setCommentInputs(prev => ({
-                                ...prev,
-                                [post.id]: e.target.value,
+                                ...prev, [post.id]: e.target.value,
                               }))
                             }
                             onKeyDown={e => {
@@ -508,9 +494,7 @@ export default function ProfilePage() {
 
                           return (
                             <div key={index} className="comment-row">
-                              <span>
-                                <strong>{commentName}</strong>: {c.text}
-                              </span>
+                              <span><strong>{commentName}</strong>: {c.text}</span>
                               <div className="comment-actions">
                                 <button className="like-btn" onClick={() => toggleCommentLike(post.id, index)}>{commentIsLiked ? "❤️" : "🤍"} {commentLikedBy.length}</button>
                                 {isOwnComment && (

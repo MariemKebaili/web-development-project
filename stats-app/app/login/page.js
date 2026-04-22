@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [darkMode, setDarkMode] = useState(false);
-  const [toast, setToast]    = useState(null);
+  const [toast, setToast] = useState(null);
 
 
   // ============================
@@ -47,6 +47,7 @@ export default function LoginPage() {
   // ============================
   // Login
   // ============================
+
   async function handleLogin(e) {
     e.preventDefault();
 
@@ -61,6 +62,7 @@ export default function LoginPage() {
     );
 
     if (user) {
+      localStorage.setItem("currentUser", user.username);
       router.push(`/profile?user=${user.username}`);
     } else {
       showToast("Invalid username or password.", "error");
@@ -95,12 +97,12 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin}>
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username" value={username}
-            onChange={e => setUsername(e.target.value)} required/>
+          <input type="text" id="username" name="username" placeholder="Enter your username"
+            value={username} onChange={e => setUsername(e.target.value)} required />
 
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" value={password}
-            onChange={e => setPassword(e.target.value)} required/>
+          <input type="password" id="password" name="password" placeholder="Enter your password"
+            value={password} onChange={e => setPassword(e.target.value)} required />
 
           <button type="submit">Log In</button>
         </form>
