@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -9,28 +9,17 @@ export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [darkMode, setDarkMode] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [toast,    setToast]    = useState(null);
 
 
   // ============================
   // Dark Mode
   // ============================
 
-  useEffect(() => {
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const saved = localStorage.getItem("darkMode");
-
-    if (saved === "enabled" || (!saved && prefersDark)) {
-      setDarkMode(true);
-      document.body.classList.add("dark-mode");
-    }
-  }, []);
-
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
     document.body.classList.toggle("dark-mode", next);
-    localStorage.setItem("darkMode", next ? "enabled" : "disabled");
   }
 
 
@@ -54,7 +43,7 @@ export default function LoginPage() {
     const trimmedUsername = username.trim();
     if (!trimmedUsername || !password) return;
 
-    const res = await fetch("/api/users");
+    const res   = await fetch("/api/users");
     const users = await res.json();
 
     const user = users.find(
@@ -62,7 +51,6 @@ export default function LoginPage() {
     );
 
     if (user) {
-      localStorage.setItem("currentUser", user.username);
       router.push(`/profile?user=${user.username}`);
     } else {
       showToast("Invalid username or password.", "error");
@@ -88,6 +76,16 @@ export default function LoginPage() {
             <img src="/logo.png" className="logo" alt="Logo" />
             <h1 className="site-name">Bookworms</h1>
           </div>
+          <nav className="nav">
+            <ul className="nav-links">
+              <li className="divider">|</li>
+              <li>
+                <button id="dark-mode-toggle" onClick={toggleDarkMode}>
+                  {darkMode ? "☀️" : "🌙"}
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </header>
 

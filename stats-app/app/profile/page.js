@@ -58,34 +58,23 @@ export default function ProfilePage() {
 
 
   // ============================
+  // Dark Mode
+  // ============================
+
+  function toggleDarkMode() {
+    const next = !darkMode;
+    setDarkMode(next);
+    document.body.classList.toggle("dark-mode", next);
+  }
+
+
+  // ============================
   // Toast
   // ============================
 
   function showToast(message, type = "info") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
-  }
-
-
-  // ============================
-  // Dark Mode
-  // ============================
-
-  useEffect(() => {
-    const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const saved = localStorage.getItem("darkMode");
-
-    if (saved === "enabled" || (!saved && prefersDark)) {
-      setDarkMode(true);
-      document.body.classList.add("dark-mode");
-    }
-  }, []);
-
-  function toggleDarkMode() {
-    const next = !darkMode;
-    setDarkMode(next);
-    document.body.classList.toggle("dark-mode", next);
-    localStorage.setItem("darkMode", next ? "enabled" : "disabled");
   }
 
 
