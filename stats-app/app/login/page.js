@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
@@ -16,10 +16,19 @@ export default function LoginPage() {
   // Dark Mode
   // ============================
 
+  useEffect(() => {
+    const saved = localStorage.getItem("darkMode");
+    if (saved === "enabled") {
+      setDarkMode(true);
+      document.body.classList.add("dark-mode");
+    }
+  }, []);
+
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
     document.body.classList.toggle("dark-mode", next);
+    localStorage.setItem("darkMode", next ? "enabled" : "disabled");
   }
 
 
