@@ -55,6 +55,8 @@ export default function FeedPage() {
   const [filterBook, setFilterBook] = useState("");
   const [authorSuggestions, setAuthorSuggestions] = useState([]);
   const [bookSuggestions, setBookSuggestions] = useState([]);
+  const [userSearch, setUserSearch] = useState("");
+  const [userSuggestions, setUserSuggestions] = useState([]);
 
   const [openCommentBoxes, setOpenCommentBoxes] = useState({});
   const [commentInputs, setCommentInputs] = useState({});
@@ -132,6 +134,7 @@ export default function FeedPage() {
       if (filterSidebarRef.current && !filterSidebarRef.current.contains(e.target)) {
         setAuthorSuggestions([]);
         setBookSuggestions([]);
+        setUserSuggestions([]);
       }
     }
     document.addEventListener("click", handleClickOutside);
@@ -170,6 +173,41 @@ export default function FeedPage() {
     setFilterBook("");
     setAuthorSuggestions([]);
     setBookSuggestions([]);
+  }
+
+  function handleUserSearchChange(value) {
+    setUserSearch(value);
+    if (value === "") {
+      setUserSuggestions([]);
+      return;
+    }
+
+    const term = value.toLowerCase();
+    setUserSuggestions(
+      users
+        .filter(u =>
+          u.username.toLowerCase().includes(term) ||
+          (u.name || "").toLowerCase().includes(term)
+        )
+        .slice(0, 6)
+    );
+  }
+
+  function searchUser() {
+    const term = userSearch.trim().toLowerCase();
+    if (!term) return;
+
+    const found = users.find(u =>
+      u.username.toLowerCase() === term ||
+      (u.name || "").toLowerCase() === term
+    );
+
+    if (found) {
+      setUserSuggestions([]);
+      goToProfile(found.username);
+    } else {
+      showToast("User not found", "error");
+    }
   }
 
   const filteredPosts = (() => {
@@ -396,6 +434,21 @@ export default function FeedPage() {
       <main className="feed-layout">
 
         <aside className="filter-sidebar" ref={filterSidebarRef}>
+          <h3>Find User🔎</h3>
+
+          <input type="text" id="search-user" placeholder="Search user..."
+            value={userSearch}
+            onChange={e => handleUserSearchChange(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") searchUser(); }} />
+          <div id="user-suggestions" className="suggestions-box">
+            {userSuggestions.map((u, i) => (
+              <div key={i} onClick={() => { setUserSearch(u.username); setUserSuggestions([]); goToProfile(u.username); }}>
+                {u.username}{u.name ? ` (${u.name})` : ""}
+              </div>
+            ))}
+          </div>
+          <button id="search-user-btn" type="button" onClick={searchUser}>Search</button>
+
           <h3>Filter Posts🔍</h3>
 
           <input type="text" id="filter-author" placeholder="Search by author.."

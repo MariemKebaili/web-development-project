@@ -1061,3 +1061,32 @@ footer {
   font-size: 0.9rem;
   font-family: var(--font-mono);
 }
+
+#search-user {
+  width: 100%;
+  display: block;
+  margin: 0.6rem 0;
+  transition: 0.2s;
+}
+
+#search-user:focus {
+  outline: none;
+  border-color: var(--color-secondary);
+  transform: scale(1.02);
+}
+
+#search-user-btn {
+  margin-top: 0.5rem;
+  padding: 0.6rem;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-background);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-family: var(--font-primary);
+}
+
+#search-user-btn:hover {
+  background: var(--color-secondary);
+}
