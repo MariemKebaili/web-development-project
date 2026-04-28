@@ -20,13 +20,13 @@ function formatTimestamp(timestamp) {
   if (seconds < 60) return "Just now";
   if (minutes < 60) return `${minutes} min ago`;
   if (hours < 24) return `${hours} hr ago`;
-  if (days <  7) return `${days} day ago`;
+  if (days < 7) return `${days} day ago`;
 
   return new Date(timestamp).toLocaleDateString();
 }
 
 // ============================
-// Shuffle Helper (explore)
+// Shuffle Posts (explore tab)
 // ============================
 
 function shuffleArray(arr) {
@@ -42,15 +42,21 @@ function shuffleArray(arr) {
 export default function FeedPage() {
   const router = useRouter();
   const params = useSearchParams();
+
+  // (takes the user from the url to identify who is logged in)
   const username = params.get("user");
 
+  // (all posts and users fetched from the database)
   const [allPosts, setAllPosts] = useState([]);
   const [users, setUsers] = useState([]);
+
+  // (takes the logged in user full data)
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState("following");
   const [darkMode, setDarkMode] = useState(false);
   const [toast, setToast] = useState(null);
 
+  // (side bar filters)
   const [filterAuthor, setFilterAuthor] = useState("");
   const [filterBook, setFilterBook] = useState("");
   const [authorSuggestions, setAuthorSuggestions] = useState([]);
@@ -58,11 +64,16 @@ export default function FeedPage() {
   const [userSearch, setUserSearch] = useState("");
   const [userSuggestions, setUserSuggestions] = useState([]);
 
+  // (tracks which post have their comment box open)
   const [openCommentBoxes, setOpenCommentBoxes] = useState({});
+
+  // (stores comments for each post)
   const [commentInputs, setCommentInputs] = useState({});
 
+  // (re-render timestamp every 60s)
   const [tick, setTick] = useState(0);
 
+  // (detect clicks outside the sidebar)
   const filterSidebarRef = useRef(null);
 
 
@@ -70,6 +81,7 @@ export default function FeedPage() {
   // Dark Mode
   // ============================
 
+  // (checks if the user had dark mode on when the user revisit this page)
   useEffect(() => {
     const saved = localStorage.getItem("darkMode");
     if (saved === "enabled") {
@@ -78,6 +90,7 @@ export default function FeedPage() {
     }
   }, []);
 
+  // (toggles dark mode on/off and saves preference to localStorage)
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
@@ -90,6 +103,7 @@ export default function FeedPage() {
   // Toast
   // ============================
 
+  // (displays temporary notification message)
   function showToast(message, type = "info") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -97,9 +111,10 @@ export default function FeedPage() {
 
 
   // ============================
-  // Auth Guard + Data Load
+  // Authantication + Data Loa
   // ============================
 
+  // (fetches all users and posts from api)
   async function loadData() {
     const [usersRes, postsRes] = await Promise.all([
       fetch("/api/users"),
@@ -116,6 +131,7 @@ export default function FeedPage() {
     setCurrentUser(user || null);
   }
 
+  // (if no user logged in, redirect to login page)
   useEffect(() => {
     if (!username) {
       router.push("/login");
@@ -146,12 +162,14 @@ export default function FeedPage() {
   // Filter
   // ============================
 
+  // (gets all unique authors or books from posts)
   function getUniqueValues(key) {
     return [...new Set(
       allPosts.map(p => p[key]).filter(v => v && v.trim() !== "")
     )];
   }
 
+  // (updates author filter and shows matching suggestions)
   function handleAuthorFilterChange(value) {
     setFilterAuthor(value);
     if (value === "") { setAuthorSuggestions([]); return; }
@@ -160,6 +178,7 @@ export default function FeedPage() {
     );
   }
 
+  // (updates book filter and shows matching suggestions)
   function handleBookFilterChange(value) {
     setFilterBook(value);
     if (value === "") { setBookSuggestions([]); return; }
@@ -168,6 +187,7 @@ export default function FeedPage() {
     );
   }
 
+  // (clears all active filters and resets suggestion dropdowns)
   function clearFilters() {
     setFilterAuthor("");
     setFilterBook("");
@@ -175,6 +195,7 @@ export default function FeedPage() {
     setBookSuggestions([]);
   }
 
+  // (shows user suggestions as the search input changes)
   function handleUserSearchChange(value) {
     setUserSearch(value);
     if (value === "") {
@@ -193,6 +214,7 @@ export default function FeedPage() {
     );
   }
 
+  // (navigates to a matched user profile or shows an error if user not found)
   function searchUser() {
     const term = userSearch.trim().toLowerCase();
     if (!term) return;
@@ -210,6 +232,8 @@ export default function FeedPage() {
     }
   }
 
+  // (following tab: posts from followed users sorted by newest first)
+  // (explore tab: posts from unfollowed users in random order)
   const filteredPosts = (() => {
     if (!currentUser) return [];
 
@@ -217,15 +241,14 @@ export default function FeedPage() {
     let base = [];
 
     if (activeTab === "following") {
-      base = allPosts
-        .filter(p => following.includes(p.author))
-        .sort((a, b) => b.timestamp - a.timestamp);
+      base = allPosts.filter(p => following.includes(p.author)).sort((a, b) => b.timestamp - a.timestamp);
     } else {
       base = shuffleArray(
         allPosts.filter(p => p.author !== currentUser.username && !following.includes(p.author))
       );
     }
 
+    // (author and book title filters)
     if (filterAuthor) {
       base = base.filter(p => p.authorInput && p.authorInput.toLowerCase().includes(filterAuthor.toLowerCase()));
     }
@@ -248,9 +271,7 @@ export default function FeedPage() {
     const likedBy = post?.likedBy || [];
     const alreadyLiked = likedBy.includes(currentUser.username);
 
-    const updatedLikedBy = alreadyLiked
-      ? likedBy.filter(u => u !== currentUser.username)
-      : [...likedBy, currentUser.username];
+    const updatedLikedBy = alreadyLiked ? likedBy.filter(u => u !== currentUser.username) : [...likedBy, currentUser.username];
 
     setAllPosts(prev =>
       prev.map(p => p.id === postId ? { ...p, likedBy: updatedLikedBy } : p)
@@ -286,7 +307,7 @@ export default function FeedPage() {
     setCommentInputs(prev => ({ ...prev, [postId]: "" }));
 
     await fetch(`/api/posts/${postId}/comment`, {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ author: currentUser.username, text }),
     });
@@ -315,7 +336,7 @@ export default function FeedPage() {
         if (p.id !== postId) return p;
         const updatedComments = p.comments.map((c, i) => {
           if (i !== commentIndex) return c;
-          const likedBy      = c.likedBy || [];
+          const likedBy = c.likedBy || [];
           const alreadyLiked = likedBy.includes(currentUser.username);
           return {
             ...c, likedBy: alreadyLiked ? likedBy.filter(u => u !== currentUser.username) : [...likedBy, currentUser.username],
@@ -352,14 +373,12 @@ export default function FeedPage() {
   // Follow / Unfollow
   // ============================
 
+  // (updates both logged in user following list and target user followers list)
   async function toggleFollow(authorUsername) {
     if (!currentUser || authorUsername === currentUser.username) return;
 
     const isFollowing = (currentUser.following || []).includes(authorUsername);
-
-    const updatedFollowing = isFollowing
-      ? currentUser.following.filter(u => u !== authorUsername)
-      : [...(currentUser.following || []), authorUsername];
+    const updatedFollowing = isFollowing ? currentUser.following.filter(u => u !== authorUsername) : [...(currentUser.following || []), authorUsername];
 
     setCurrentUser(prev => ({ ...prev, following: updatedFollowing }));
 
@@ -388,6 +407,7 @@ export default function FeedPage() {
   // Go to Profile
   // ============================
 
+  // (navigates to a user profile while keeping the logged in user)
   function goToProfile(authorUsername) {
     window.location.href = `/profile?user=${username}&view=${authorUsername}`;
   }
@@ -436,8 +456,7 @@ export default function FeedPage() {
         <aside className="filter-sidebar" ref={filterSidebarRef}>
           <h3>Find User🔎</h3>
 
-          <input type="text" id="search-user" placeholder="Search user..."
-            value={userSearch}
+          <input type="text" id="search-user" placeholder="Search user..." value={userSearch}
             onChange={e => handleUserSearchChange(e.target.value)}
             onKeyDown={e => { if (e.key === "Enter") searchUser(); }} />
           <div id="user-suggestions" className="suggestions-box">
@@ -452,7 +471,7 @@ export default function FeedPage() {
           <h3>Filter Posts🔍</h3>
 
           <input type="text" id="filter-author" placeholder="Search by author.."
-            value={filterAuthor} onChange={e => handleAuthorFilterChange(e.target.value)} />
+            value={filterAuthor} onChange={e => handleAuthorFilterChange(e.target.value)}/>
           <div id="author-suggestions" className="suggestions-box">
             {authorSuggestions.map((a, i) => (
               <div key={i} onClick={() => { setFilterAuthor(a); setAuthorSuggestions([]); }}>{a}</div>
@@ -460,7 +479,7 @@ export default function FeedPage() {
           </div>
 
           <input type="text" id="filter-book" placeholder="Search by book.."
-            value={filterBook} onChange={e => handleBookFilterChange(e.target.value)} />
+            value={filterBook} onChange={e => handleBookFilterChange(e.target.value)}/>
           <div id="book-suggestions" className="suggestions-box">
             {bookSuggestions.map((b, i) => (
               <div key={i} onClick={() => { setFilterBook(b); setBookSuggestions([]); }}>{b}</div>
@@ -490,7 +509,7 @@ export default function FeedPage() {
             )}
 
             {currentUser && filteredPosts.map(post => {
-              const authorUser  = users.find(u => u.username === post.author);
+              const authorUser = users.find(u => u.username === post.author);
               const displayName = authorUser?.name || post.author;
               const likedBy = post.likedBy || [];
               const isLiked = likedBy.includes(currentUser.username);
@@ -506,9 +525,7 @@ export default function FeedPage() {
                       <span className="author-name" onClick={() => goToProfile(post.author)}
                         style={{ cursor: "pointer" }}>{displayName}</span>
                       {!isOwnPost && (
-                        <button className="follow-btn" onClick={() => toggleFollow(post.author)}>
-                          {isFollowing ? "Unfollow" : "Follow"}
-                        </button>
+                        <button className="follow-btn" onClick={() => toggleFollow(post.author)}>{isFollowing ? "Unfollow" : "Follow"}</button>
                       )}
                     </div>
                     <span className="timestamp">{formatTimestamp(post.timestamp)}</span>
@@ -525,12 +542,8 @@ export default function FeedPage() {
                   </div>
 
                   <div className="post-actions">
-                    <button className="like-btn" onClick={() => handleLike(post.id)}>
-                      {isLiked ? "❤️" : "🤍"} {likedBy.length}
-                    </button>
-                    <button className="comment-btn" onClick={() => toggleCommentBox(post.id)}>
-                      💬 {comments.length}
-                    </button>
+                    <button className="like-btn" onClick={() => handleLike(post.id)}>{isLiked ? "❤️" : "🤍"} {likedBy.length}</button>
+                    <button className="comment-btn" onClick={() => toggleCommentBox(post.id)}> 💬 {comments.length}</button>
                     {isOwnPost && (
                       <button className="delete-btn" onClick={() => deletePost(post.id)}>X</button>
                     )}
@@ -538,8 +551,7 @@ export default function FeedPage() {
 
                   {openCommentBoxes[post.id] && (
                     <div id={`comment-box-${post.id}`}>
-                      <input type="text" className="comment-input"
-                        placeholder="Write a comment..." value={commentInputs[post.id] || ""}
+                      <input type="text" className="comment-input" placeholder="Write a comment..." value={commentInputs[post.id] || ""}
                         onChange={e => setCommentInputs(prev => ({ ...prev, [post.id]: e.target.value }))}
                         onKeyDown={e => { if (e.key === "Enter") addComment(post.id); }} />
                       <button className="comment-btn" onClick={() => addComment(post.id)}>Comment</button>

@@ -6,16 +6,21 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
 
+  // (stores the username and password)
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  // (tracks dark mode on/off state)
   const [darkMode, setDarkMode] = useState(false);
-  const [toast,    setToast]    = useState(null);
+
+  const [toast, setToast] = useState(null);
 
 
   // ============================
   // Dark Mode
   // ============================
 
+  // (checks if the user had dark mode on when the user revisit this page)
   useEffect(() => {
     const saved = localStorage.getItem("darkMode");
     if (saved === "enabled") {
@@ -24,6 +29,7 @@ export default function LoginPage() {
     }
   }, []);
 
+  // (toggles dark mode on/off and saves preference to localStorage)
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
@@ -36,6 +42,7 @@ export default function LoginPage() {
   // Toast
   // ============================
 
+  // (displays temporary notification message)
   function showToast(message, type = "info") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -46,13 +53,14 @@ export default function LoginPage() {
   // Login
   // ============================
 
+  // (fetches all users and checks if the entered credentials match any user in the database)
   async function handleLogin(e) {
     e.preventDefault();
 
     const trimmedUsername = username.trim();
     if (!trimmedUsername || !password) return;
 
-    const res   = await fetch("/api/users");
+    const res = await fetch("/api/users");
     const users = await res.json();
 
     const user = users.find(
@@ -89,9 +97,7 @@ export default function LoginPage() {
             <ul className="nav-links">
               <li className="divider">|</li>
               <li>
-                <button id="dark-mode-toggle" onClick={toggleDarkMode}>
-                  {darkMode ? "☀️" : "🌙"}
-                </button>
+                <button id="dark-mode-toggle" onClick={toggleDarkMode}>{darkMode ? "☀️" : "🌙"}</button>
               </li>
             </ul>
           </nav>
@@ -104,19 +110,17 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin}>
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username"
-            value={username} onChange={e => setUsername(e.target.value)} required />
+          <input type="text" id="username" name="username" placeholder="enter your username" value={username} 
+            onChange={e => setUsername(e.target.value)} required/>
 
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password"
-            value={password} onChange={e => setPassword(e.target.value)} required />
+          <input type="password" id="password" name="password" placeholder="enter your password" value={password}
+            onChange={e => setPassword(e.target.value)} required/>
 
           <button type="submit">Log In</button>
         </form>
 
-        <p className="signup-link">
-          Don't have an account? <a href="/signup">Sign up</a>
-        </p>
+        <p className="signup-link">Don't have an account? <a href="/signup">Sign up</a></p>
 
       </main>
 

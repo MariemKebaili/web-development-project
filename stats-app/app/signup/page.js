@@ -1,23 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEffect } from 'react';  
 
 export default function SignupPage() {
   const router = useRouter();
 
+  // (stores the username, email, and password)
   const [username, setUsername] = useState("");
-  const [email,    setEmail]    = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // (tracks dark mode on/off state)
   const [darkMode, setDarkMode] = useState(false);
-  const [toast,    setToast]    = useState(null);
+
+  const [toast, setToast] = useState(null);
 
 
   // ============================
   // Dark Mode
   // ============================
 
+  // (checks if the user had dark mode on when the user revisit this page)
   useEffect(() => {
     const saved = localStorage.getItem("darkMode");
     if (saved === "enabled") {
@@ -26,6 +30,7 @@ export default function SignupPage() {
     }
   }, []);
 
+  // (toggles dark mode on/off and saves preference to localStorage)
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
@@ -38,6 +43,7 @@ export default function SignupPage() {
   // Toast
   // ============================
 
+  // (displays temporary notification message)
   function showToast(message, type = "info") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -48,23 +54,22 @@ export default function SignupPage() {
   // Sign Up
   // ============================
 
+  // (validates the input and checks if the username is taken)
   async function handleSignup(e) {
     e.preventDefault();
 
     const trimmedUsername = username.trim();
-    const trimmedEmail    = email.trim();
+    const trimmedEmail = email.trim();
 
     const hasLetter = /[A-Za-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
 
     if (password.length < 8 || !hasLetter || !hasNumber) {
-      showToast(
-        "Use a strong password: at least 8 characters with letters and numbers.", "error"
-      );
+      showToast("Use a strong password: at least 8 characters, with letters and numbers", "error");
       return;
     }
 
-    const res   = await fetch("/api/users");
+    const res = await fetch("/api/users");
     const users = await res.json();
 
     const existingUser = users.find(u => u.username === trimmedUsername);
@@ -73,21 +78,22 @@ export default function SignupPage() {
       return;
     }
 
+    // (creates a new user in the database)
     const newUser = {
-      username:  trimmedUsername,
-      email:     trimmedEmail,
-      password:  password,
-      name:      trimmedUsername,
-      bio:       "",
-      photo:     "",
+      username: trimmedUsername,
+      email: trimmedEmail,
+      password: password,
+      name: trimmedUsername,
+      bio: "",
+      photo: "",
       followers: [],
       following: [],
     };
 
     const createRes = await fetch("/api/users", {
-      method:  "POST",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(newUser),
+      body: JSON.stringify(newUser),
     });
 
     if (createRes.ok) {
@@ -121,9 +127,7 @@ export default function SignupPage() {
             <ul className="nav-links">
               <li className="divider">|</li>
               <li>
-                <button id="dark-mode-toggle" onClick={toggleDarkMode}>
-                  {darkMode ? "☀️" : "🌙"}
-                </button>
+                <button id="dark-mode-toggle" onClick={toggleDarkMode}>{darkMode ? "☀️" : "🌙"}</button>
               </li>
             </ul>
           </nav>
@@ -136,24 +140,22 @@ export default function SignupPage() {
 
         <form onSubmit={handleSignup}>
           <label htmlFor="username">Username:</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username"
-            value={username} onChange={e => setUsername(e.target.value)} required />
+          <input type="text" id="username" name="username" placeholder="create your username" value={username}
+            onChange={e => setUsername(e.target.value)} required />
 
           <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email"
-            value={email} onChange={e => setEmail(e.target.value)} required />
+          <input type="email" id="email" name="email" placeholder="enter your email" value={email}
+            onChange={e => setEmail(e.target.value)} required />
 
           <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" placeholder="Enter a strong password"
-            minLength={8} value={password} onChange={e => setPassword(e.target.value)} required />
-          <small className="input-note">Password must be at least 8 characters long.</small>
+          <input type="password" id="password" name="password" placeholder="create a strong password" minLength={8} value={password}
+            onChange={e => setPassword(e.target.value)} required />
+          <small className="input-note">your password must be at least 8 characters long</small>
 
           <button type="submit">Sign Up</button>
         </form>
 
-        <p className="login-link">
-          Already have an account? <a href="/login">Log in</a>
-        </p>
+        <p className="login-link">Already have an account? <a href="/login">Log in</a></p>
 
       </main>
 

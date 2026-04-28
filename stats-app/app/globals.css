@@ -479,6 +479,20 @@ header {
   color: var(--color-secondary);
 }
 
+/* ===================================
+   STATISTICS PAGE
+   =================================== */
+
+.statistics-page {
+  width: 100%;
+  max-width: 900px;
+  margin: auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 /* ========================================
    LOGIN & SIGNUP
    ======================================== */

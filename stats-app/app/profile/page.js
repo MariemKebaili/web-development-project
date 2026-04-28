@@ -34,26 +34,41 @@ export default function ProfilePage() {
   const viewUsername = params.get("view") || loggedInUsername;
   const isOwnProfile = viewUsername === loggedInUsername;
 
+  // (all posts and users fetched from the database)
   const [allPosts, setAllPosts] = useState([]);
   const [users, setUsers] = useState([]);
+
   const [viewedUser, setViewedUser]   = useState(null);
+
+  // (takes the logged in user full data)
   const [loggedInUser, setLoggedInUser] = useState(null);
 
+  // (controls new post form visibility)
   const [showPost, setShowPost] = useState(false);
+
+  // (controls edit profile form visibility)
   const [showEdit, setShowEdit] = useState(false);
+
+  // (tracks dark mode on/off state)
   const [darkMode, setDarkMode] = useState(false);
+
   const [toast, setToast] = useState(null);
 
+  // (new post form fields)
   const [newPost, setNewPost] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newBook, setNewBook] = useState("");
 
+  // (edit profile form fields, it's pre filled when the form opens)
   const [editPhoto, setEditPhoto] = useState("");
   const [editName, setEditName] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [editBio, setEditBio] = useState("");
 
+  // (tracks which post have their comment box open)
   const [openCommentBoxes, setOpenCommentBoxes] = useState({});
+
+  // (stores comments for each post)
   const [commentInputs, setCommentInputs] = useState({});
 
 
@@ -61,6 +76,7 @@ export default function ProfilePage() {
   // Dark Mode
   // ============================
 
+  // (checks if the user had dark mode on when the user revisit this page)
   useEffect(() => {
     const saved = localStorage.getItem("darkMode");
     if (saved === "enabled") {
@@ -69,6 +85,7 @@ export default function ProfilePage() {
     }
   }, []);
 
+  // (toggles dark mode on/off and saves preference to localStorage)
   function toggleDarkMode() {
     const next = !darkMode;
     setDarkMode(next);
@@ -81,6 +98,7 @@ export default function ProfilePage() {
   // Toast
   // ============================
 
+  // (displays temporary notification message)
   function showToast(message, type = "info") {
     setToast({ message, type });
     setTimeout(() => setToast(null), 2500);
@@ -91,6 +109,7 @@ export default function ProfilePage() {
   // Initial Data Load
   // ============================
 
+  // (fetches all users and posts from api)
   async function loadData() {
     if (!loggedInUsername) {
       router.push("/login");
@@ -120,17 +139,18 @@ export default function ProfilePage() {
   }, []);
 
 
-  // ============================
+  // ===============================
   // Posts belonging to viewed user
-  // ============================
+  // ===============================
 
   const userPosts = [...allPosts].filter(p => p.author === viewUsername).reverse();
 
 
   // ============================
-  // Create Post
+  // Create a Post
   // ============================
 
+  // (creates a new post and adds it to the database)
   async function handlePost() {
     if (!newPost.trim()) return;
 
@@ -162,9 +182,10 @@ export default function ProfilePage() {
 
 
   // ============================
-  // Delete Post (own posts only)
+  // Delete a Post (owned posts only)
   // ============================
 
+  // (deletes a post from the database)
   async function deletePost(postId) {
     setAllPosts(prev => prev.filter(p => p.id !== postId));
 
@@ -205,10 +226,12 @@ export default function ProfilePage() {
   // Comment System
   // ============================
 
+  // (shows or hides the comment input box for a post)
   function toggleCommentBox(postId) {
     setOpenCommentBoxes(prev => ({ ...prev, [postId]: !prev[postId] }));
   }
 
+  // (adds a new comment to a post and saves it to the database)
   async function addComment(postId) {
     const text = (commentInputs[postId] || "").trim();
     if (!text || !loggedInUser) return;
@@ -229,6 +252,7 @@ export default function ProfilePage() {
     });
   }
 
+  // (removes a comment by index)
   async function deleteComment(postId, commentIndex) {
     setAllPosts(prev => prev.map(p => {
         if (p.id !== postId) return p;
@@ -245,6 +269,7 @@ export default function ProfilePage() {
     });
   }
 
+  // (toggles a like on a specific comment and saves it to the database)
   async function toggleCommentLike(postId, commentIndex) {
     if (!loggedInUser) return;
 
@@ -274,6 +299,7 @@ export default function ProfilePage() {
   // Edit Profile
   // ============================
 
+  // (pre fills edit form with the current profile values)
   function openEditForm() {
     if (!viewedUser) return;
     setEditPhoto(viewedUser.photo || "");
@@ -283,11 +309,12 @@ export default function ProfilePage() {
     setShowEdit(true);
   }
 
+  // (saves the updated profile to the database)
   async function handleSaveProfile() {
     const trimmedUsername = editUsername.trim();
 
     const res = await fetch("/api/users", {
-      method:  "PUT",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         currentUsername: loggedInUsername,
@@ -306,7 +333,7 @@ export default function ProfilePage() {
         await loadData();
       }
     } else {
-      showToast("Failed to save profile.", "error");
+      showToast("Failed to save profile", "error");
     }
   }
 
@@ -315,6 +342,7 @@ export default function ProfilePage() {
   // Logout
   // ============================
 
+  // (redirects the user to the log in page)
   function handleLogout() {
     router.push("/login");
   }
@@ -361,9 +389,7 @@ export default function ProfilePage() {
         <section className="profile-header-top">
           <div className="photo-name-row">
             <img src={viewedUser?.photo || "/profile_photo.png"} alt="Profile Photo" className="profile-photo-large" id="profile-pic" width="150px"/>
-            <h2 id="display-name" className="account-name">
-              {viewedUser?.name || viewedUser?.username || "name"}
-            </h2>
+            <h2 id="display-name" className="account-name">{viewedUser?.name || viewedUser?.username || "name"}</h2>
           </div>
 
           <div className="username-row">
@@ -396,7 +422,7 @@ export default function ProfilePage() {
             <h3>Edit Profile</h3>
 
             <label htmlFor="input-photo">Photo URL:</label><br />
-            <input type="text" id="input-photo" placeholder="Paste image link here" value={editPhoto} onChange={e => setEditPhoto(e.target.value)}/><br />
+            <input type="text" id="input-photo" placeholder="paste image link here" value={editPhoto} onChange={e => setEditPhoto(e.target.value)}/><br />
 
             <label htmlFor="input-name">Name:</label><br />
             <input type="text" id="input-name" value={editName} onChange={e => setEditName(e.target.value)}/><br />
@@ -405,7 +431,7 @@ export default function ProfilePage() {
             <input type="text" id="input-username" value={editUsername} onChange={e => setEditUsername(e.target.value)}/><br />
 
             <label htmlFor="input-bio">Bio:</label><br />
-            <textarea id="input-bio" rows="4" placeholder="Write something about your reading journey..." value={editBio} onChange={e => setEditBio(e.target.value)}/><br />
+            <textarea id="input-bio" rows="4" placeholder="write something about your reading journey..." value={editBio} onChange={e => setEditBio(e.target.value)}/><br />
 
             <button type="button" id="save-changes-btn" onClick={handleSaveProfile}>Save Changes</button>
             <button type="button" id="cancel-edit-btn" onClick={() => setShowEdit(false)}>Cancel</button>
@@ -427,7 +453,7 @@ export default function ProfilePage() {
                 onChange={e => setNewAuthor(e.target.value)}/>
               <input type="text" id="book-input" placeholder="Add the book title (optional)" value={newBook}
                 onChange={e => setNewBook(e.target.value)}/>
-              <br /><br />
+              <br/><br/>
               <button id="post-btn" onClick={handlePost}>Post</button>
             </section>
           )}
@@ -436,8 +462,7 @@ export default function ProfilePage() {
             <div id="user-posts-list">
 
               {userPosts.length === 0 ? (
-                <p className="empty-msg"> No posts yet. Start sharing your favorite quotes!</p>
-              ) : (
+                <p className="empty-msg"> No posts yet. Start sharing your favorite quotes!</p> ) : (
                 userPosts.map(post => {
                   const likedBy = post.likedBy || [];
                   const isLiked = likedBy.includes(loggedInUsername);
@@ -456,12 +481,8 @@ export default function ProfilePage() {
                       </p>
 
                       <div className="post-actions">
-                        <button className="like-btn" onClick={() => handleLike(post.id)}>
-                          {isLiked ? "❤️" : "🤍"} {likedBy.length}
-                        </button>
-                        <button className="comment-btn"
-                          onClick={() => toggleCommentBox(post.id)}> 💬 {comments.length}
-                        </button>
+                        <button className="like-btn" onClick={() => handleLike(post.id)}>{isLiked ? "❤️" : "🤍"} {likedBy.length}</button>
+                        <button className="comment-btn" onClick={() => toggleCommentBox(post.id)}> 💬 {comments.length}</button>
                         {isPostOwner && (
                           <button className="delete-btn"onClick={() => deletePost(post.id)}>X</button>
                         )}
@@ -469,8 +490,7 @@ export default function ProfilePage() {
 
                       {openCommentBoxes[post.id] && (
                         <div id={`comment-box-${post.id}`}>
-                          <input type="text" className="comment-input" id={`comment-input-${post.id}`}
-                            placeholder="Write a comment..." value={commentInputs[post.id] || ""} onChange={e =>
+                          <input type="text" className="comment-input" id={`comment-input-${post.id}`} placeholder="write a comment..." value={commentInputs[post.id] || ""} onChange={e =>
                               setCommentInputs(prev => ({
                                 ...prev, [post.id]: e.target.value,
                               }))
